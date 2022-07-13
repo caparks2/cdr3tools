@@ -15,3 +15,5 @@ Imports:
     rlang,
     stats,
     stringr
+URL: https://github.com/caparks2/cdr3tools
+BugReports: https://github.com/caparks2/cdr3tools/issues
