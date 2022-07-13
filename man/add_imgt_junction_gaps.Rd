@@ -59,11 +59,42 @@ add_imgt_junction_gaps(cdr3_seqs, remove_non_canonicals = TRUE)
 
 # Input sequences must be amino acids:
 try(
-add_imgt_junction_gaps("ATCATATTATATATCG")
+  add_imgt_junction_gaps("ATCATATTATATATCG")
 )
 
 # Input sequences must be a character vector:
 try(
-add_imgt_junction_gaps(c(104:118))
+  add_imgt_junction_gaps(c(104:118))
 )
+
+}
+\references{
+https://www.imgt.org/IMGTScientificChart/Numbering/IMGTIGVLsuperfamily.html
+
+Lefranc M.-P., "Unique database numbering system for immunogenetic analysis",
+Immunology Today, 18, 509 (1997). PMID: 9386342
+
+Lefranc M.-P., "The IMGT unique numbering for Immunoglobulins, T cell
+receptors and Ig-like domains", The Immunologist, 7, 132-136 (1999).
+
+Lefranc, M.-P., Pommié, C., Ruiz, M., Giudicelli, V., Foulquier, E., Truong,
+L., Thouvenin-Contet, V. and Lefranc, G., "IMGT unique numbering for
+immunoglobulin and T cell receptor variable domains and Ig superfamily
+V-like domains", Dev. Comp. Immunol., 27, 55-77 (2003). PMID: 12477501
+
+Ruiz, M. and Lefranc, M.-P. "IMGT gene identification and Colliers de Perles
+of human immunoglobulin with known 3D structures", Immunogenetics, 53,
+857-883 (2002). PMID: 11862387
+
+Kaas, Q. and Lefranc, M.-P. "IMGT Colliers de Perles: standardized
+sequence-structure representations of the IgSF and MhcSF superfamily
+domains", Current Bioinformatics, 2, 21-30 (2007).
+
+Kaas, Q., Ruiz, M. and Lefranc, M.-P. "IMGT/3Dstructure-DB and
+IMGT/StructuralQuery, a database and a tool for immunoglobulin, T cell
+receptor and MHC structural data", Nucl. Acids. Res., 32, D208-D210 (2004).
+PMID: 14681396
+}
+\author{
+Christopher Parks (caparks2@gmail.com)
 }
