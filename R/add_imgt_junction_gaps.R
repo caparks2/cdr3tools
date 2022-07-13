@@ -44,16 +44,15 @@
 #'
 #' # Input sequences must be amino acids:
 #' try(
-#' add_imgt_junction_gaps("ATCATATTATATATCG")
+#'   add_imgt_junction_gaps("ATCATATTATATATCG")
 #' )
 #'
 #' # Input sequences must be a character vector:
 #' try(
-#' add_imgt_junction_gaps(c(104:118))
+#'   add_imgt_junction_gaps(c(104:118))
 #' )
 #' @export
 add_imgt_junction_gaps <- function(x, remove_non_canonicals = FALSE) {
-
   if (!is.character(x)) {
     rlang::abort("IMGT JUNCTION sequences must be a character vector.")
   }
@@ -76,8 +75,8 @@ add_imgt_junction_gaps <- function(x, remove_non_canonicals = FALSE) {
     negate = TRUE
   )
 
-  if(remove_non_canonicals) {
-    if(length(bad_cdr3s) != 0) {
+  if (remove_non_canonicals) {
+    if (length(bad_cdr3s) != 0) {
       x[bad_cdr3s] <- NA_character_
       rlang::inform(
         paste(
@@ -89,7 +88,7 @@ add_imgt_junction_gaps <- function(x, remove_non_canonicals = FALSE) {
       rlang::inform("No non-canonical CDR3 sequences were detected.")
     }
   } else {
-    if(length(bad_cdr3s) != 0) {
+    if (length(bad_cdr3s) != 0) {
       rlang::warn(
         paste0(
           length(bad_cdr3s), " ", "non-canonical Junctions were detected.\n",
@@ -142,5 +141,4 @@ add_imgt_junction_gaps <- function(x, remove_non_canonicals = FALSE) {
   )
 
   return(seqs)
-
 }
