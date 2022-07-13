@@ -15,13 +15,14 @@ their gap-inserted, length-adjusted replacements.
 You can install cdr3tools like so:
 
 ``` r
-if(!requireNamespace("devtools", quietly = TRUE)) 
+if (!requireNamespace("devtools", quietly = TRUE)) {
   install.packages("devtools")
+}
 
-devtools::install_github("caparks2/cdr3")
+devtools::install_github("caparks2/cdr3tools")
 ```
 
-Example useage:
+Example usage:
 
 ``` r
 cdr3_seqs <- c(
