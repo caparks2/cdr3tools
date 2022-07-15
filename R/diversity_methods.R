@@ -6,17 +6,19 @@
 #'   quantify diversity of T cell receptor sequence repertoires. These methods
 #'   must be passed as individual character strings to the `.method` argument in
 #'   the [cdr3tools::repertoire_diversity()] function. Available options to
-#'   `.method` are :
-#'     * \code{"shannons.clonality"}
-#'     * \code{"shannons.entropy"}
-#'     * \code{"shannons.diversity"}
-#'     * \code{"gini.simpson"}
-#'     * \code{"simpsons.clonality"}
-#'     * \code{"simpsons.index"}
-#'     * \code{"simpsons.dominance"}
-#'     * \code{"simpsons.equitability"}
-#'     * \code{"r20"}
-#'     * \code{"slope"}
+#'   `.method` are:
+#'   * \code{"shannons.clonality"}
+#'   * \code{"shannons.entropy"}
+#'   * \code{"shannons.diversity"}
+#'   * \code{"gini.simpson"}
+#'   * \code{"simpsons.clonality"}
+#'   * \code{"simpsons.index"}
+#'   * \code{"simpsons.dominance"}
+#'   * \code{"simpsons.equitability"}
+#'   * \code{"r20"}
+#'   * \code{"slope"}
+#' @examples diversity_methods()
+#' @author Christopher Parks (caparks2@gmail.com)
 #' @seealso [cdr3tools::repertoire_diversity()]
 #' @family Repertoire Diversity
 #' @export
