@@ -43,34 +43,35 @@
 #'   slope (higher absolute value) indicates a more diverse repertoire, while a
 #'   shallow slope (lower absolute value) indicates a more clonal repertoire.
 #'
-#' @param x Input. A numeric vector of counts. Counts may represent reads,
+#' @param .x Input. A numeric vector of counts. Counts may represent reads,
 #'   clone copies, or templates, etc of unique sequences (clonotypes or
 #'   rearrangments). Normalization to frequencies is not needed since this is
 #'   performed by the functions during calculation of each diversity measure.
 #'
-#' @param method A character string of one of the following options:
-#'   * \code{"shannons_entropy"}
-#'   * \code{"shannons_diversity"}
-#'   * \code{"shannons_clonality"}
-#'   * \code{"simpsons_index"}
-#'   * \code{"gini_simpson_index"}
-#'   * \code{"simpsons_dominance"}
-#'   * \code{"simpsons_equitability"}
-#'   * \code{"simpsons_clonality"}
+#' @param .method A character string of one of the following options:
+#'   * \code{"shannons.clonality"}
+#'   * \code{"shannons.entropy"}
+#'   * \code{"shannons.diversity"}
+#'   * \code{"gini.simpson"}
+#'   * \code{"simpsons.clonality"}
+#'   * \code{"simpsons.index"}
+#'   * \code{"simpsons.dominance"}
+#'   * \code{"simpsons.equitability"}
 #'   * \code{"r20"}
 #'   * \code{"slope"}
 #'
-#'   The default selection is "simpsons_clonality".
+#'   Default value is "shannons.clonality".
 #'
-#' @param r A numeric vector of length 1. The fraction of top unique sequences
-#'   that, in their sum, account for the given `r` proportion of total copies
-#'   (or reads or templates).
+#' @param .r A numeric vector of length 1. The fraction of top unique sequences
+#'   that, in their sum, account for the given `.r` proportion of total copies
+#'   (or reads or templates). Only used when `.method = "r20"`. Default value is
+#'   0.2.
 #'
 #' @returns A numeric vector of length 1.
 #'
 #' @examples
 #' template_counts <- c(100, 8, 3, 2, rep(1, times = 1e4))
-#' repertoire_diversity(x = template_counts, method = "r20", r = 0.5)
+#' repertoire_diversity(.x = template_counts, .method = "r20", .r = 0.5)
 #'
 #' @author Boris Grinshpun
 #' @author Aleksandar Obradovic
@@ -85,32 +86,28 @@
 #'   PMCID: PMC6129121
 #'
 #' @export
-repertoire_diversity <- function(x, method = c("shannons_entropy",
-  "shannons_diversity","shannons_clonality", "simpsons_index",
-  "gini_simpson_index", "simpsons_dominance", "simpsons_equitability",
-  "simpsons_clonality", "r20", "slope"), r = 0.2) {
+repertoire_diversity <- function(.x, .method = diversity_methods(), .r = 0.2) {
 
-  method <- method[1]
+  .method <- rlang::arg_match(.method)
 
-  result <- switch(method,
-    shannons_entropy = shannons_entropy(x),
-    shannons_diversity = shannons_diversity_index(x),
-    shannons_clonality = shannons_clonality(x),
-    simpsons_index = simpsons_index(x),
-    gini_simpson_index = gini_simpson_index(x),
-    simpsons_dominance = simpsons_dominance(x),
-    simpsons_equitability = simpsons_equitability(x),
-    simpsons_clonality = simpsons_clonality(x),
-    r20 = r20(x, r),
-    slope = abundance_slope(x),
-    rlang::abort("Please enter an allowed method. see `?repertoire_diversity`.")
-  )
+  result <- switch(.method,
+    shannons.entropy = shannons_entropy(.x),
+    shannons.diversity = shannons_diversity_index(.x),
+    shannons.clonality = shannons_clonality(.x),
+    simpsons.index = simpsons_index(.x),
+    gini.simpson = gini_simpson_index(.x),
+    simpsons.dominance = simpsons_dominance(.x),
+    simpsons.equitability = simpsons_equitability(.x),
+    simpsons.clonality = simpsons_clonality(.x),
+    r20 = r20(.x, .r),
+    slope = abundance_slope(.x)
+    )
 
   return(result)
 }
 
-shannons_entropy <- function(x) {
-  x <- x[x > 0]
+shannons_entropy <- function(.x) {
+  x <- .x[.x > 0]
   S <- length(x)
   P <- x / sum(x)
   Hmax <- log2(S)
@@ -118,8 +115,8 @@ shannons_entropy <- function(x) {
   return(H)
 }
 
-shannons_diversity_index <- function(x) {
-  x <- x[x > 0]
+shannons_diversity_index <- function(.x) {
+  x <- .x[.x > 0]
   S <- length(x)
   P <- x / sum(x)
   Hmax <- log(S)
@@ -127,8 +124,8 @@ shannons_diversity_index <- function(x) {
   return(H)
 }
 
-shannons_clonality <- function(x) {
-  x <- x[x > 0]
+shannons_clonality <- function(.x) {
+  x <- .x[.x > 0]
   S <- length(x)
   P <- x / sum(x)
   Hmax <- log2(S)
@@ -138,31 +135,31 @@ shannons_clonality <- function(x) {
   return(C)
 }
 
-simpsons_index <- function(x) {
-  x <- x[x > 0]
+simpsons_index <- function(.x) {
+  x <- .x[.x > 0]
   P <- x / sum(x)
   D1 <- sum(P * P)
   return(D1)
 }
 
-gini_simpson_index <- function(x) {
-  x <- x[x > 0]
+gini_simpson_index <- function(.x) {
+  x <- .x[.x > 0]
   P <- x / sum(x)
   D1 <- sum(P * P)
   GS <- 1 - D1
   return(GS)
 }
 
-simpsons_dominance <- function(x) {
-  x <- x[x > 0]
+simpsons_dominance <- function(.x) {
+  x <- .x[.x > 0]
   P <- x / sum(x)
   D1 <- sum(P * P)
   D2 <- 1 / D1
   return(D2)
 }
 
-simpsons_equitability <- function(x) {
-  x <- x[x > 0]
+simpsons_equitability <- function(.x) {
+  x <- .x[.x > 0]
   S <- length(x)
   P <- x / sum(x)
   D1 <- sum(P * P)
@@ -171,27 +168,27 @@ simpsons_equitability <- function(x) {
   return(E)
 }
 
-simpsons_clonality <- function(x) {
-  x <- x[x > 0]
+simpsons_clonality <- function(.x) {
+  x <- .x[.x > 0]
   P <- x / sum(x)
   D1 <- sum(P * P)
   return(sqrt(D1))
 }
 
-r20 <- function(x, r) {
-  x <- x[x > 0]
+r20 <- function(.x, .r) {
+  x <- .x[.x > 0]
   S <- length(x)
   P <- x / sum(x)
   P <- sort(P, decreasing = TRUE)
   EP <- cumsum(P)
-  N <- length(which(EP <= r))
+  N <- length(which(EP <= .r))
   R <- N / S
   return(R)
 }
 
 #' @importFrom rlang .data
-abundance_slope <- function(x) {
-  data <- tibble::tibble(templates = {{ x }}) %>%
+abundance_slope <- function(.x) {
+  data <- tibble::tibble(templates = {{ .x }}) %>%
     dplyr::filter(.data$templates > 0) %>%
     dplyr::mutate(template_fraction = .data$templates / sum(.data$templates)) %>%
     dplyr::group_by(.data$template_fraction, .data$templates) %>%
@@ -221,3 +218,5 @@ abundance_slope <- function(x) {
   slope <- abs(stats::coefficients(model)[[2]])
   return(slope)
 }
+#' @seealso [cdr3tools::diversity_methods()]
+#' @family Repertoire Diversity

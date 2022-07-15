@@ -4,39 +4,34 @@
 \alias{repertoire_diversity}
 \title{Measures of Diversity}
 \usage{
-repertoire_diversity(
-  x,
-  method = c("shannons_entropy", "shannons_diversity", "shannons_clonality",
-    "simpsons_index", "gini_simpson_index", "simpsons_dominance",
-    "simpsons_equitability", "simpsons_clonality", "r20", "slope"),
-  r = 0.2
-)
+repertoire_diversity(.x, .method = diversity_methods(), .r = 0.2)
 }
 \arguments{
-\item{x}{Input. A numeric vector of counts. Counts may represent reads,
+\item{.x}{Input. A numeric vector of counts. Counts may represent reads,
 clone copies, or templates, etc of unique sequences (clonotypes or
 rearrangments). Normalization to frequencies is not needed since this is
 performed by the functions during calculation of each diversity measure.}
 
-\item{method}{A character string of one of the following options:
+\item{.method}{A character string of one of the following options:
 \itemize{
-\item \code{"shannons_entropy"}
-\item \code{"shannons_diversity"}
-\item \code{"shannons_clonality"}
-\item \code{"simpsons_index"}
-\item \code{"gini_simpson_index"}
-\item \code{"simpsons_dominance"}
-\item \code{"simpsons_equitability"}
-\item \code{"simpsons_clonality"}
+\item \code{"shannons.clonality"}
+\item \code{"shannons.entropy"}
+\item \code{"shannons.diversity"}
+\item \code{"gini.simpson"}
+\item \code{"simpsons.clonality"}
+\item \code{"simpsons.index"}
+\item \code{"simpsons.dominance"}
+\item \code{"simpsons.equitability"}
 \item \code{"r20"}
 \item \code{"slope"}
 }
 
-The default selection is "simpsons_clonality".}
+Default value is "shannons.clonality".}
 
-\item{r}{A numeric vector of length 1. The fraction of top unique sequences
-that, in their sum, account for the given \code{r} proportion of total copies
-(or reads or templates).}
+\item{.r}{A numeric vector of length 1. The fraction of top unique sequences
+that, in their sum, account for the given \code{.r} proportion of total copies
+(or reads or templates). Only used when \code{.method = "r20"}. Default value is
+0.2.}
 }
 \value{
 A numeric vector of length 1.
@@ -88,7 +83,7 @@ shallow slope (lower absolute value) indicates a more clonal repertoire.
 }
 \examples{
 template_counts <- c(100, 8, 3, 2, rep(1, times = 1e4))
-repertoire_diversity(x = template_counts, method = "r20", r = 0.5)
+repertoire_diversity(.x = template_counts, .method = "r20", .r = 0.5)
 
 }
 \references{
