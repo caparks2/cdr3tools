@@ -12,8 +12,16 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.0
 Imports: 
-    rlang,
+    dplyr,
+    magrittr,
+    rlang (>= 0.4.11),
     stats,
-    stringr
+    stringr,
+    tibble
 URL: https://github.com/caparks2/cdr3tools
 BugReports: https://github.com/caparks2/cdr3tools/issues
+Depends: 
+    R (>= 2.10)
+LazyData: true
+Suggests: 
+    roxygen2
