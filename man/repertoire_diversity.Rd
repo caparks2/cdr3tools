@@ -93,6 +93,12 @@ diversity of the human T cell alloresponse. JCI Insight.
 2018 Aug 9;3(15):e121256. doi: 10.1172/jci.insight.121256. PMID: 30089728;
 PMCID: PMC6129121
 }
+\seealso{
+\code{\link[=diversity_methods]{diversity_methods()}}
+
+Other Repertoire Diversity: 
+\code{\link{diversity_methods}()}
+}
 \author{
 Boris Grinshpun
 
@@ -100,3 +106,4 @@ Aleksandar Obradovic
 
 Christopher Parks (caparks2@gmail.com)
 }
+\concept{Repertoire Diversity}

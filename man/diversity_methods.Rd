@@ -13,5 +13,23 @@ For use with the \code{\link[=repertoire_diversity]{repertoire_diversity()}} fun
 These are the various methods of diversity calculation that can be used to
 quantify diversity of T cell receptor sequence repertoires. These methods
 must be passed as individual character strings to the \code{.method} argument in
-the \code{\link[=repertoire_diversity]{repertoire_diversity()}} function.
+the \code{\link[=repertoire_diversity]{repertoire_diversity()}} function. Available options to
+\code{.method} are :
+* \code{"shannons.clonality"}
+* \code{"shannons.entropy"}
+* \code{"shannons.diversity"}
+* \code{"gini.simpson"}
+* \code{"simpsons.clonality"}
+* \code{"simpsons.index"}
+* \code{"simpsons.dominance"}
+* \code{"simpsons.equitability"}
+* \code{"r20"}
+* \code{"slope"}
 }
+\seealso{
+\code{\link[=repertoire_diversity]{repertoire_diversity()}}
+
+Other Repertoire Diversity: 
+\code{\link{repertoire_diversity}()}
+}
+\concept{Repertoire Diversity}

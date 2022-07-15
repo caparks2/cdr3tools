@@ -84,7 +84,8 @@
 #'   diversity of the human T cell alloresponse. JCI Insight.
 #'   2018 Aug 9;3(15):e121256. doi: 10.1172/jci.insight.121256. PMID: 30089728;
 #'   PMCID: PMC6129121
-#'
+#' @seealso [cdr3tools::diversity_methods()]
+#' @family Repertoire Diversity
 #' @export
 repertoire_diversity <- function(.x, .method = diversity_methods(), .r = 0.2) {
 
@@ -218,5 +219,3 @@ abundance_slope <- function(.x) {
   slope <- abs(stats::coefficients(model)[[2]])
   return(slope)
 }
-#' @seealso [cdr3tools::diversity_methods()]
-#' @family Repertoire Diversity
