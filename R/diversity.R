@@ -72,8 +72,10 @@
 #' template_counts <- c(100, 8, 3, 2, rep(1, times = 1e4))
 #' repertoire_diversity(x = template_counts, method = "r20", r = 0.5)
 #'
+#' @author Boris Grinshpun
+#' @author Aleksandar Obradovic
 #' @author Christopher Parks (caparks2@gmail.com)
-#'   Boris Grinshpun
+#'
 #'
 #' @references
 #' DeWolf S, Grinshpun B, Savage T, Lau SP, Obradovic A, Shonts B, Yang S,
