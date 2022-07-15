@@ -82,21 +82,11 @@
 #'   PMCID: PMC6129121
 #'
 #' @export
-repertoire_diversity <- function(
-    x,
-    method = c(
-      "shannons_entropy",
-      "shannons_diversity",
-      "shannons_clonality",
-      "simpsons_index",
-      "gini_simpson_index",
-      "simpsons_dominance",
-      "simpsons_equitability",
-      "simpsons_clonality",
-      "r20",
-      "slope"
-    ),
-    r = 0.2) {
+repertoire_diversity <- function(x, method = c("shannons_entropy",
+  "shannons_diversity","shannons_clonality", "simpsons_index",
+  "gini_simpson_index", "simpsons_dominance", "simpsons_equitability",
+  "simpsons_clonality", "r20", "slope"), r = 0.2) {
+
   method <- method[1]
 
   result <- switch(method,
