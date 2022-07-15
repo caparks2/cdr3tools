@@ -30,8 +30,9 @@ performed by the functions during calculation of each diversity measure.}
 \item \code{"simpsons_clonality"}
 \item \code{"r20"}
 \item \code{"slope"}
-The default selection is "simpsons_clonality".
-}}
+}
+
+The default selection is "simpsons_clonality".}
 
 \item{r}{A numeric vector of length 1. The fraction of top unique sequences
 that, in their sum, account for the given \code{r} proportion of total copies

@@ -59,6 +59,7 @@
 #'   * \code{"simpsons_clonality"}
 #'   * \code{"r20"}
 #'   * \code{"slope"}
+#'
 #'   The default selection is "simpsons_clonality".
 #'
 #' @param r A numeric vector of length 1. The fraction of top unique sequences
