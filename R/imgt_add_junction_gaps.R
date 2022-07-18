@@ -16,20 +16,20 @@
 #'   but that is not implemented here yet. JUNCTION sequences longer than 15
 #'   positions are left as is.
 #'
-#' @param x A character vector of IMGT JUNCTION sequences defined by the
+#' @param .x A character vector of IMGT JUNCTION sequences defined by the
 #'   conserved 2nd-CYS at position 104 through the J-PHE or J-TRP at position
 #'   118.
-#' @param remove_non_canonicals A boolean.
+#' @param .rm_non_canonicals Logical.
 #'   * `TRUE`: removes non-canonical JUNCTION sequences that lack a 2nd-CYS
 #'     and/or the J-PHE/J-TRP and replaces them with `NA`.
 #'   * `FALSE`: (the default) leaves non-canonical JUNCTION sequences as they
 #'     are.
 #'
-#' @returns A character vector the same length as `x`.
+#' @returns A character vector the same length as `.x`.
 #'
 #' @examples
 #' # Simple case of 1 sequence:
-#' add_imgt_junction_gaps("CASSSGTAPFSFW")
+#' imgt_add_junction_gaps("CASSSGTAPFSFW")
 #'
 #' # Multiple sequences containing short, long, and non-canonical JUNCTIONS:
 #' cdr3_seqs <- c(
@@ -39,19 +39,19 @@
 #'   "TGPLHF",
 #'   "CASSQETRYDFLTIDTGGKKKNTEAFF"
 #' )
-#' add_imgt_junction_gaps(cdr3_seqs)
+#' imgt_add_junction_gaps(cdr3_seqs)
 #'
 #' # Remove non-canonical JUNCTIONS:
-#' add_imgt_junction_gaps(cdr3_seqs, remove_non_canonicals = TRUE)
+#' imgt_add_junction_gaps(cdr3_seqs, .rm_non_canonicals = TRUE)
 #'
 #' # Input sequences must be amino acids:
 #' try(
-#'   add_imgt_junction_gaps("ATCATATTATATATCG")
+#'   imgt_add_junction_gaps("ATCATATTATATATCG")
 #' )
 #'
 #' # Input sequences must be a character vector:
 #' try(
-#'   add_imgt_junction_gaps(c(104:118))
+#'   imgt_add_junction_gaps(c(104:118))
 #' )
 #'
 #' @author Christopher Parks (caparks2@gmail.com)
@@ -83,37 +83,40 @@
 #'   receptor and MHC structural data", Nucl. Acids. Res., 32, D208-D210 (2004).
 #'   PMID: 14681396
 #'
+#' @family IMGT
+#' @seealso {imgt_simple_headers()} {imgt_get_ref_seqs()}
+#'
 #' @export
 #'
-add_imgt_junction_gaps <- function(x, remove_non_canonicals = FALSE) {
-  if (!is.character(x)) {
+imgt_add_junction_gaps <- function(.x, .rm_non_canonicals = FALSE) {
+  if (!is.character(.x)) {
     rlang::abort("IMGT JUNCTION sequences must be a character vector.")
   }
 
-  is_DNA <- any(
+  .is_DNA <- any(
     stringr::str_detect(
-      x,
+      .x,
       stringr::regex("[[^ACTG]]", ignore_case = TRUE),
       negate = TRUE
     )
   )
 
-  if (is_DNA) {
+  if (.is_DNA) {
     rlang::abort("Nucleotide sequences detected. Please enter translated, amino acid sequences")
   }
 
-  bad_cdr3s <- stringr::str_which(
-    x,
+  .bad_cdr3s <- stringr::str_which(
+    .x,
     stringr::regex("^C.*W$|^C.*F$", ignore_case = TRUE),
     negate = TRUE
   )
 
-  if (remove_non_canonicals) {
-    if (length(bad_cdr3s) != 0) {
-      x[bad_cdr3s] <- NA_character_
+  if (.rm_non_canonicals) {
+    if (length(.bad_cdr3s) != 0) {
+      .x[.bad_cdr3s] <- NA_character_
       rlang::inform(
         paste(
-          length(bad_cdr3s),
+          length(.bad_cdr3s),
           "non-canonical CDR3 sequences were removed prior to gap insertion length adjustment."
         )
       )
@@ -121,10 +124,10 @@ add_imgt_junction_gaps <- function(x, remove_non_canonicals = FALSE) {
       rlang::inform("No non-canonical CDR3 sequences were detected.")
     }
   } else {
-    if (length(bad_cdr3s) != 0) {
+    if (length(.bad_cdr3s) != 0) {
       rlang::warn(
         paste0(
-          length(bad_cdr3s), " ", "non-canonical Junctions were detected.\n",
+          length(.bad_cdr3s), " ", "non-canonical Junctions were detected.\n",
           "  These have been left as is, without length adjustments.\n",
           "  set remove_non_canonicals = TRUE to remove them."
         )
@@ -132,46 +135,46 @@ add_imgt_junction_gaps <- function(x, remove_non_canonicals = FALSE) {
     }
   }
 
-  seqs <- x
+  .seqs <- .x
 
-  gaps <- 1:13
+  .gaps <- 1:13
 
-  replacement <- sapply(
-    X = gaps, FUN = function(gaps) {
-      paste0("\\1", paste0(rep(".", gaps), collapse = ""), "\\2")
+  .replacement <- sapply(
+    X = .gaps, FUN = function(.gaps) {
+      paste0("\\1", paste0(rep(".", .gaps), collapse = ""), "\\2")
     }
   )
 
-  cdr3_lengths <- 14:2
+  .cdr3_lengths <- 14:2
 
-  n1 <- sapply(
-    X = cdr3_lengths,
-    FUN = function(cdr3_lengths) {
-      if (cdr3_lengths %% 2 != 0) (cdr3_lengths + 1) / 2 - 1 else cdr3_lengths / 2 - 1
+  .n1 <- sapply(
+    X = .cdr3_lengths,
+    FUN = function(.cdr3_lengths) {
+      if (.cdr3_lengths %% 2 != 0) (.cdr3_lengths + 1) / 2 - 1 else .cdr3_lengths / 2 - 1
     }
   )
 
-  n2 <- sapply(
-    X = cdr3_lengths,
-    FUN = function(cdr3_lengths) {
-      if (cdr3_lengths %% 2 != 0) (cdr3_lengths + 1) / 2 - 2 else cdr3_lengths / 2 - 1
+  .n2 <- sapply(
+    X = .cdr3_lengths,
+    FUN = function(.cdr3_lengths) {
+      if (.cdr3_lengths %% 2 != 0) (.cdr3_lengths + 1) / 2 - 2 else .cdr3_lengths / 2 - 1
     }
   )
 
-  pattern <- mapply(
-    FUN = function(n1, n2) {
-      paste0("(^C.{", n1, "})(.{", n2, "}F$|.{", n2, "}W$)")
+  .pattern <- mapply(
+    FUN = function(.n1, .n2) {
+      paste0("(^C.{", .n1, "})(.{", .n2, "}F$|.{", .n2, "}W$)")
     },
-    n1,
-    n2
+    .n1 = .n1,
+    .n2 = .n2
   )
 
-  replace_expressions <- stats::setNames(replacement, pattern)
+  .replace_expressions <- stats::setNames(.replacement, .pattern)
 
-  seqs <- stringr::str_replace_all(
-    seqs,
-    stringr::regex(replace_expressions, ignore_case = TRUE)
+  .seqs <- stringr::str_replace_all(
+    .seqs,
+    stringr::regex(.replace_expressions, ignore_case = TRUE)
   )
 
-  return(seqs)
+  return(.seqs)
 }

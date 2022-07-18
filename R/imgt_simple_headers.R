@@ -31,8 +31,9 @@
 #' imgt_simple_headers(head(vgenes), .include_species = TRUE)
 #'
 #' @author Christopher Parks (caparks2@gmail.com)
-#' @family IMGT FASTA Reference Sequences
-#' @seealso {get_imgt_ref_seqs()}
+#'
+#' @family IMGT
+#' @seealso {imgt_add_junction_gaps()} {imgt_get_ref_seqs()}
 #'
 #' @references
 #' https://www.imgt.org/IMGTindex/Fasta.php
