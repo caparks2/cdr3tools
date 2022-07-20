@@ -30,7 +30,7 @@
 #' # Simplified headers with species name
 #' imgt_simple_headers(head(vgenes), .include_species = TRUE)
 #'
-#' @author Christopher Parks (caparks2@gmail.com)
+#' @author Christopher Parks
 #'
 #' @family IMGT
 #' @seealso {imgt_add_junction_gaps()} {imgt_get_ref_seqs()}

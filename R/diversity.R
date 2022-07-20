@@ -75,7 +75,7 @@
 #'
 #' @author Boris Grinshpun
 #' @author Aleksandar Obradovic
-#' @author Christopher Parks (caparks2@gmail.com)
+#' @author Christopher Parks
 #'
 #'
 #' @references

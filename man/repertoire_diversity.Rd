@@ -104,6 +104,6 @@ Boris Grinshpun
 
 Aleksandar Obradovic
 
-Christopher Parks (caparks2@gmail.com)
+Christopher Parks
 }
 \concept{Repertoire Diversity}

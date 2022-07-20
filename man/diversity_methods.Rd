@@ -38,6 +38,6 @@ Other Repertoire Diversity:
 \code{\link{repertoire_diversity}()}
 }
 \author{
-Christopher Parks (caparks2@gmail.com)
+Christopher Parks
 }
 \concept{Repertoire Diversity}

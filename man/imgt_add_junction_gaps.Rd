@@ -103,6 +103,6 @@ Other IMGT:
 \code{\link{imgt_simple_headers}()}
 }
 \author{
-Christopher Parks (caparks2@gmail.com)
+Christopher Parks
 }
 \concept{IMGT}

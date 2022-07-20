@@ -54,7 +54,7 @@
 #'   imgt_add_junction_gaps(c(104:118))
 #' )
 #'
-#' @author Christopher Parks (caparks2@gmail.com)
+#' @author Christopher Parks
 #'
 #' @references
 #' https://www.imgt.org/IMGTScientificChart/Numbering/IMGTIGVLsuperfamily.html

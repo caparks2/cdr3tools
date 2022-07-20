@@ -27,7 +27,7 @@
 #'
 #' imgt_get_ref_seqs(file_path)
 #'
-#' @author Christopher Parks (caparks2@gmail.com)
+#' @author Christopher Parks
 #'
 #' @references
 #' https://www.imgt.org/vquest/refseqh.html

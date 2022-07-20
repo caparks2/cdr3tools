@@ -18,7 +18,7 @@
 #'   * \code{"r20"}
 #'   * \code{"slope"}
 #' @examples diversity_methods()
-#' @author Christopher Parks (caparks2@gmail.com)
+#' @author Christopher Parks
 #' @seealso [cdr3tools::repertoire_diversity()]
 #' @family Repertoire Diversity
 #' @export

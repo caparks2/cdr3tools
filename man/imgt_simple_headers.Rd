@@ -53,6 +53,6 @@ Other IMGT:
 \code{\link{imgt_get_ref_seqs}()}
 }
 \author{
-Christopher Parks (caparks2@gmail.com)
+Christopher Parks
 }
 \concept{IMGT}
