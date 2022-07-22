@@ -2,7 +2,6 @@
 #'
 #' A Bob Rudis Function
 #'
-#'
 #' @param x a single URL
 #' @param non_2xx_return_value what to do if the site exists but the
 #'        HTTP status code is not in the `2xx` range. Default is to return `FALSE`.
