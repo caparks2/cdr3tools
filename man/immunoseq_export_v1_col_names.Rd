@@ -13,4 +13,4 @@ immunoseq_export_v1_col_names
 \description{
 A file containing the column names for immunoseq v1 export .tsv files
 }
-\keyword{internal}
+\keyword{datasets}

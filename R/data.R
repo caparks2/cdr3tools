@@ -13,7 +13,38 @@
 #'
 #' A file containing the column names for immunoseq v1 export .tsv files
 #'
-#' @keywords internal
 #' @format R data object. A character vector.
 #'
 "immunoseq_export_v1_col_names"
+
+#' TiRP Weights
+#'
+#' A lookup table of values needed for calculating TiRP scores.
+#'
+#' @format R data object. A data.frame.
+#'
+"TiRP_weights"
+
+#' Heldout Means SDS
+#'
+#' A lookup table of values needed for calculating TiRP scores.
+#'
+#' @format R data object. A data.frame.
+#'
+"heldout_means_sds"
+
+#' Amino Acid Physiochemical Features
+#'
+#' A lookup table of values needed for calculating TiRP scores.
+#'
+#' @format R data object. A data.frame.
+#'
+"aminoacid_physiochemical_feats"
+
+#' TCR Sequence Data
+#'
+#' An example data file of TCR sequences.
+#'
+#' @format R data object. A data.frame.
+#'
+"tcr_seqs"
