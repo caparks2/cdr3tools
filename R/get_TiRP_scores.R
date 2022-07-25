@@ -64,6 +64,9 @@ get_TiRP_scores <- function(.data, .details = FALSE) {
 
 get_TiRP_scores_internal <- function(.data, .details) {
   data <- as.data.frame(.data)
+  v_gene_col <- data[, apply(data, 2, function(x) all(grepl("^TRBV[0-9\\*-]+$|^TCRBV[0-9\\*-]+$", x, ignore.case = TRUE))), drop = TRUE]
+  cdr3_col <- data[, apply(data, 2, function(x) all(grepl("^[ACDEFGHIKLMNPQRSTVWY]+$", x, ignore.case = TRUE))), drop = TRUE]
+  data <- data.frame(vgene = v_gene_col, cdr3 = cdr3_col)
 
   weights <- cdr3tools::TiRP_weights
 
