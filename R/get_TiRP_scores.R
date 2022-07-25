@@ -48,7 +48,7 @@
 #' @export get_TiRP_scores
 get_TiRP_scores <- function(.data, .details = FALSE) {
   if (inherits(.data, "list")) {
-    purrr::map(.data, get_TiRP_scores_internal, .details = .details)
+    lapply(.data, get_TiRP_scores_internal, .details = .details)
   } else if (inherits(.data, "data.frame")) {
     get_TiRP_scores_internal(.data, .details = .details)
   } else {
