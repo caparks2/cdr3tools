@@ -12,12 +12,20 @@
 #'   data that will be used to calculate TiRP scores. The format must conform to
 #'   the following:
 #'   \describe{
-#'   \item{$V.name}{First column. A character vector of TRBV gene names}
-#'   \item{$CDR3.aa}{Second column. A character vector of IMGT JUNCTION
-#'     sequences (CDR3 amino acid sequences from 2nd-CYS p104 to J-TRP/J-PHE
-#'     p118)}
+#'   \item{First Column}{A character vector of TRBV gene names}
+#'   \item{Second Column}{A character vector of IMGT JUNCTION sequences (CDR3
+#'     amino acid sequences from 2nd-CYS p104 to J-TRP/J-PHE p118)}
 #'   }
-#' @returns A data frame of TiRP scores for each evaluated unique sequence.
+#'   Column names are not important.
+#'
+#'   `.data` can alternativeley be a list containing multiple of such data
+#'     frames.
+#' @param .details A logical. `FALSE` (the default) returns results as numeric
+#'   vectors of TiRP scores. `TRUE` returns results as data frames containing
+#'   all evaluated V genes and their CDR3 sequences, along with all
+#'   intermediary scores plus the final TiRP scores.
+#' @returns A numeric vector of TiRP scores or a data frame of detailed results
+#'   for each evaluated unique sequence.
 #' @examples
 #' # Confirm the proper format for the input data
 #' head(tcr_seqs)
@@ -38,7 +46,23 @@
 #' https://github.com/immunogenomics/TiRP
 #'
 #' @export get_TiRP_scores
-get_TiRP_scores <- function(.data) {
+get_TiRP_scores <- function(.data, .details = FALSE) {
+  if (inherits(.data, "list")) {
+    purrr::map(.data, get_TiRP_scores_internal, .details = .details)
+  } else if (inherits(.data, "data.frame")) {
+    get_TiRP_scores_internal(.data, .details = .details)
+  } else {
+    rlang::abort(
+      paste(
+        ".data must either be a single data frame (with V genes in the first",
+        "column and CDR3 amino acid sequences in the second column) or a list",
+        "containing multiple of such data frames."
+      )
+    )
+  }
+}
+
+get_TiRP_scores_internal <- function(.data, .details) {
   data <- as.data.frame(.data)
 
   weights <- cdr3tools::TiRP_weights
@@ -144,6 +168,11 @@ get_TiRP_scores <- function(.data) {
   data <- data[, !(grepl("perc_mid", colnames(data)))]
 
   data <- tibble::as_tibble(data)
+
+  if (!.details) {
+    data <- data$TiRP
+  }
+
   return(data)
 }
 

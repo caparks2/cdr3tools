@@ -4,21 +4,30 @@
 \alias{get_TiRP_scores}
 \title{Calculate TiRP Scores}
 \usage{
-get_TiRP_scores(.data)
+get_TiRP_scores(.data, .details = FALSE)
 }
 \arguments{
 \item{.data}{A data frame (and/or a tibble). This is the input TCR sequence
 data that will be used to calculate TiRP scores. The format must conform to
 the following:
 \describe{
-\item{$V.name}{First column. A character vector of TRBV gene names}
-\item{$CDR3.aa}{Second column. A character vector of IMGT JUNCTION
-sequences (CDR3 amino acid sequences from 2nd-CYS p104 to J-TRP/J-PHE
-p118)}
-}}
+\item{First Column}{A character vector of TRBV gene names}
+\item{Second Column}{A character vector of IMGT JUNCTION sequences (CDR3
+amino acid sequences from 2nd-CYS p104 to J-TRP/J-PHE p118)}
+}
+Column names are not important.
+
+\code{.data} can alternativeley be a list containing multiple of such data
+frames.}
+
+\item{.details}{A logical. \code{FALSE} (the default) returns results as numeric
+vectors of TiRP scores. \code{TRUE} returns results as data frames containing
+all evaluated V genes and their CDR3 sequences, along with all
+intermediary scores plus the final TiRP scores.}
 }
 \value{
-A data frame of TiRP scores for each evaluated unique sequence.
+A numeric vector of TiRP scores or a data frame of detailed results
+for each evaluated unique sequence.
 }
 \description{
 A scoring system to quantify TCR-intrinsic regulatory potential (TiRP)
