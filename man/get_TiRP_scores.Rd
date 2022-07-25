@@ -34,7 +34,7 @@ IMGT unique numbering rules for JUNCTIONS.
 # Confirm the proper format for the input data
 head(tcr_seqs)
 
-TiRP(head(tcr_seqs))
+get_TiRP_scores(head(tcr_seqs))
 }
 \references{
 Lagattuta KA, Kang JB, Nathan A, Pauken KE, Jonsson AH, Rao DA, Sharpe AH,

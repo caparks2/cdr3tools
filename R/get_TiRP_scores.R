@@ -22,7 +22,7 @@
 #' # Confirm the proper format for the input data
 #' head(tcr_seqs)
 #'
-#' TiRP(head(tcr_seqs))
+#' get_TiRP_scores(head(tcr_seqs))
 #' @author Kaitlyn A. Lagattuta, Joyce B. Kang, Aparna Nathan (Center for Data
 #'   Sciences, Brigham and Women’s Hospital, Boston, MA, USA)
 #'   Christopher Parks (rewritten and improved for use in this package.)
@@ -41,7 +41,7 @@
 get_TiRP_scores <- function(.data) {
   data <- as.data.frame(.data)
 
-  weights <- TiRP_weights
+  weights <- cdr3tools::TiRP_weights
 
   # suppressPackageStartupMessages({
   #   library(stringr)
@@ -76,7 +76,7 @@ get_TiRP_scores <- function(.data) {
   ## amino acid composition in the CDR3 middle region
   data$cdr3MR <- sapply(data$cdr3, function(x) substr(x, 5, nchar(x) - 6))
   aminos <- c("A", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "Y")
-  ref_stats <- heldout_means_sds
+  ref_stats <- cdr3tools::heldout_means_sds
   for (i in 1:length(aminos)) {
     new <- sapply(data$cdr3MR, function(x) stringr::str_count(x, aminos[i]) / nchar(x))
     mn <- ref_stats$mean[ref_stats$amino == aminos[i]]
@@ -143,12 +143,14 @@ get_TiRP_scores <- function(.data) {
   data$TiRP <- (data$total_score + 0.0329) / 0.2364
   data <- data[, !(grepl("perc_mid", colnames(data)))]
 
+  data <- tibble::as_tibble(data)
   return(data)
 }
 
 reformat_vgene_cp_modified <- function(vg) {
   vg <- as.character(vg)
   vgene <- gsub("TRBV", "TCRBV", vg)
+  vgene <- gsub("\\*0[[:digit:]]$", "", vgene)
   info <- strsplit(vgene, "-")
   res <- vapply(X = info, FUN.VALUE = character(1), FUN = function(.info) {
     family <- .info[1]
@@ -157,7 +159,6 @@ reformat_vgene_cp_modified <- function(vg) {
     member <- ifelse(substr(member, 1, 1) == "0", member, paste("0", member, sep = ""))
     paste(family, member, sep = "-")
   })
-  res <- tibble::as_tibble(res)
   return(res)
 }
 
