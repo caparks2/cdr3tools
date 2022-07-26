@@ -47,10 +47,28 @@
 #'
 #' @export get_TiRP_scores
 get_TiRP_scores <- function(.data, .details = FALSE) {
+
   if (inherits(.data, "list")) {
-    lapply(.data, get_TiRP_scores_internal, .details = .details)
+    if (.Platform$OS.type == "unix") {
+      doParallel::registerDoParallel(cores = parallel::detectCores())
+      foreach::foreach(x = .data, .final = \ (x) setNames(x, names(.data))) foreach::`%dopar%` {
+        get_TiRP_scores_internal(.data, .details = .details)
+      }
+      doParallel::stopImplicitCluster()
+    } else {
+      lapply(.data, get_TiRP_scores_internal, .details = .details)
+    }
+    # lapply(.data, get_TiRP_scores_internal, .details = .details)
   } else if (inherits(.data, "data.frame")) {
-    get_TiRP_scores_internal(.data, .details = .details)
+    if (.Platform$OS.type == "unix") {
+      doParallel::registerDoParallel(cores = parallel::detectCores())
+      foreach::foreach(x = .data, .final = \ (x) as.data.frame(x)) foreach::`%dopar%` {
+        get_TiRP_scores_internal(.data, .details = .details)
+      }
+      doParallel::stopImplicitCluster()
+    } else {
+      get_TiRP_scores_internal(.data, .details = .details)
+    }
   } else {
     rlang::abort(
       paste(
