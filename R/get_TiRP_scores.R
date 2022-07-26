@@ -44,31 +44,13 @@
 #' https://www.nature.com/articles/s41590-022-01129-x
 #'
 #' https://github.com/immunogenomics/TiRP
-#'
 #' @export get_TiRP_scores
 get_TiRP_scores <- function(.data, .details = FALSE) {
 
   if (inherits(.data, "list")) {
-    if (.Platform$OS.type == "unix") {
-      doParallel::registerDoParallel(cores = parallel::detectCores())
-      foreach::foreach(x = .data, .final = \ (x) setNames(x, names(.data))) foreach::`%dopar%` {
-        get_TiRP_scores_internal(.data, .details = .details)
-      }
-      doParallel::stopImplicitCluster()
-    } else {
-      lapply(.data, get_TiRP_scores_internal, .details = .details)
-    }
-    # lapply(.data, get_TiRP_scores_internal, .details = .details)
+    lapply(.data, get_TiRP_scores_internal, .details = .details)
   } else if (inherits(.data, "data.frame")) {
-    if (.Platform$OS.type == "unix") {
-      doParallel::registerDoParallel(cores = parallel::detectCores())
-      foreach::foreach(x = .data, .final = \ (x) as.data.frame(x)) foreach::`%dopar%` {
-        get_TiRP_scores_internal(.data, .details = .details)
-      }
-      doParallel::stopImplicitCluster()
-    } else {
-      get_TiRP_scores_internal(.data, .details = .details)
-    }
+    get_TiRP_scores_internal(.data, .details = .details)
   } else {
     rlang::abort(
       paste(
