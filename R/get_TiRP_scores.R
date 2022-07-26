@@ -65,24 +65,24 @@ get_TiRP_scores <- function(.data, .details = FALSE) {
 get_TiRP_scores_internal <- function(.data, .details) {
   data <- as.data.frame(.data)
 
-  v_gene_col <- data[, apply(data, 2, function(x) {
-    x <- x[!is.na(x)]
-    sum(grepl("^TRBV[0-9\\*-]+$|^TCRBV[0-9\\*-]+$", x, ignore.case = TRUE)) > 0
-  }), drop = TRUE]
-
-  cdr3_col <- data[, apply(data, 2, function(x) {
-    x <- x[!is.na(x)]
-    not_v_genes <- !grepl("^TRBV[0-9\\*-]+$|^TCRBV[0-9\\*-]+$", x, ignore.case = TRUE)
-    amino_acids <- grepl("^[ACDEFGHIKLMNPQRSTVWY]+$", x, ignore.case = TRUE)
-    not_nucleotides <- grepl("[^ACTG]", x, ignore.case = TRUE)
-    len <- c(length(not_v_genes) > 0, length(amino_acids) > 0, length(not_nucleotides) > 0)
-    if (!all(len)) return(FALSE)
-    sum(c(not_v_genes, amino_acids, not_nucleotides)) == length(c(not_v_genes, amino_acids, not_nucleotides))
-  }), drop = TRUE]
-
-  data <- data.frame(v_gene = v_gene_col, cdr3 = cdr3_col)
-  data <- data[!is.na(data$v_gene), ]
-  data <- data[!is.na(data$cdr3), ]
+  # v_gene_col <- data[, apply(data, 2, function(x) {
+  #   x <- x[!is.na(x)]
+  #   sum(grepl("^TRBV[0-9\\*-]+$|^TCRBV[0-9\\*-]+$", x, ignore.case = TRUE)) > 0
+  # }), drop = TRUE]
+  #
+  # cdr3_col <- data[, apply(data, 2, function(x) {
+  #   x <- x[!is.na(x)]
+  #   not_v_genes <- !grepl("^TRBV[0-9\\*-]+$|^TCRBV[0-9\\*-]+$", x, ignore.case = TRUE)
+  #   amino_acids <- grepl("^[ACDEFGHIKLMNPQRSTVWY]+$", x, ignore.case = TRUE)
+  #   not_nucleotides <- grepl("[^ACTG]", x, ignore.case = TRUE)
+  #   len <- c(length(not_v_genes) > 0, length(amino_acids) > 0, length(not_nucleotides) > 0)
+  #   if (!all(len)) return(FALSE)
+  #   sum(c(not_v_genes, amino_acids, not_nucleotides)) == length(c(not_v_genes, amino_acids, not_nucleotides))
+  # }), drop = TRUE]
+  #
+  # data <- data.frame(v_gene = v_gene_col, cdr3 = cdr3_col)
+  # data <- data[!is.na(data$v_gene), ]
+  # data <- data[!is.na(data$cdr3), ]
 
   weights <- cdr3tools::TiRP_weights
 
