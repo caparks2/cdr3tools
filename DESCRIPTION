@@ -1,6 +1,6 @@
 Package: cdr3tools
 Title: Insert Length Adjustment Gaps in IMGT JUNCTION sequences
-Version: 0.0.0.9019
+Version: 0.0.0.9020
 Authors@R: 
     person("Christopher", "Parks", , "caparks2@gmail.com", 
            role = c("aut", "cre"), comment = c(ORCID = "0000-0002-2772-2965"))
