@@ -64,14 +64,16 @@ get_TiRP_scores <- function(.data, .details = FALSE) {
 
 get_TiRP_scores_internal <- function(.data, .details) {
   data <- as.data.frame(.data)
-  v_gene_col <- data[, apply(data, 2, function(x) all(grepl("^TRBV[0-9\\*-]+$|^TCRBV[0-9\\*-]+$", x, ignore.case = TRUE))), drop = TRUE]
-  cdr3_col <- data[, apply(data, 2, function(x) {
+  tmp <- na.omit(data)
+  v_gene_col <- tmp[, apply(data, 2, function(x) all(grepl("^TRBV[0-9\\*-]+$|^TCRBV[0-9\\*-]+$", x, ignore.case = TRUE))), drop = TRUE]
+  cdr3_col <- tmp[, apply(data, 2, function(x) {
     not_v_genes <- all(!grepl("^TRBV[0-9\\*-]+$|^TCRBV[0-9\\*-]+$", x, ignore.case = TRUE))
     amino_acids <- all(grepl("^[ACDEFGHIKLMNPQRSTVWY]+$", x, ignore.case = TRUE))
     not_nucleotides <- all(grepl("[^ACTG]", x, ignore.case = TRUE))
     amino_acids && not_nucleotides && not_v_genes
   }), drop = TRUE]
-  data <- data.frame(vgene = v_gene_col, cdr3 = cdr3_col)
+  data <- data.frame(v_gene = v_gene_col, cdr3 = cdr3_col)
+  data <- tidyr::drop_na(data, v_gene, cdr3)
 
   weights <- cdr3tools::TiRP_weights
 
