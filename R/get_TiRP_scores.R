@@ -41,10 +41,10 @@
 #'
 #' get_TiRP_scores(head(tcr_seqs))
 #' @author Kaitlyn A. Lagattuta
-#'   Joyce B. Kang,
-#'   Aparna Nathan
-#'   Center for Data Sciences, Brigham and Women’s Hospital, Boston, MA, USA
-#'   Christopher Parks (rewritten and improved for use in this package.)
+#' @author Joyce B. Kang
+#' @author Aparna Nathan
+#' @author Center for Data Sciences, Brigham and Women’s Hospital, Boston, MA, USA
+#' @author Christopher Parks (I rewrote and improved for use in this package.)
 #' @references
 #' Lagattuta KA, Kang JB, Nathan A, Pauken KE, Jonsson AH, Rao DA, Sharpe AH,
 #'   Ishigaki K, Raychaudhuri S. Repertoire analyses reveal T cell antigen

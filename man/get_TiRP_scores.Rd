@@ -67,8 +67,12 @@ https://github.com/immunogenomics/TiRP
 }
 \author{
 Kaitlyn A. Lagattuta
-Joyce B. Kang,
+
+Joyce B. Kang
+
 Aparna Nathan
+
 Center for Data Sciences, Brigham and Women’s Hospital, Boston, MA, USA
-Christopher Parks (rewritten and improved for use in this package.)
+
+Christopher Parks (I rewrote and improved for use in this package.)
 }
