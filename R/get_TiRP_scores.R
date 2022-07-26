@@ -64,7 +64,7 @@ get_TiRP_scores <- function(.data, .details = FALSE) {
 
 get_TiRP_scores_internal <- function(.data, .details) {
   data <- as.data.frame(.data)
-  tmp <- na.omit(data)
+  tmp <- stats::na.omit(data)
   v_gene_col <- tmp[, apply(data, 2, function(x) all(grepl("^TRBV[0-9\\*-]+$|^TCRBV[0-9\\*-]+$", x, ignore.case = TRUE))), drop = TRUE]
   cdr3_col <- tmp[, apply(data, 2, function(x) {
     not_v_genes <- all(!grepl("^TRBV[0-9\\*-]+$|^TCRBV[0-9\\*-]+$", x, ignore.case = TRUE))
