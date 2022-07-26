@@ -84,13 +84,20 @@ get_TiRP_scores_internal <- function(.data, .details) {
 
   ## standardizing TRBV gene names
 
-  ex <- data[, 1][!(grepl("nresolved", data[, 1]))][1]
-  # if (substr(data[1,1], 1, 4) =="TRBV"){
-  if (!(grepl("-0", ex))) {
-    data$vgene <- reformat_vgene_cp_modified(data[, 1])
+  # ex <- data[, 1][!(grepl("nresolved", data[, 1]))][1]
+  # # if (substr(data[1,1], 1, 4) =="TRBV"){
+  # if (!(grepl("-0", ex))) {
+  #   data$vgene <- reformat_vgene_cp_modified(data[, 1])
+  # } else {
+  #   data$vgene <- as.character(data[, 1])
+  # }
+
+  if (any(stringr::str_detect(data[, 1], "TCRBV|\\*[0-9][0-9]"))) {
+    data$vgene <- fix_vdj_genes2(data[, 1])
   } else {
     data$vgene <- as.character(data[, 1])
   }
+
 
   ## CDR3 sequence
   data$cdr3 <- as.character(data[, 2])
@@ -196,6 +203,17 @@ reformat_vgene_cp_modified <- function(vg) {
     member <- ifelse(substr(member, 1, 1) == "0", member, paste("0", member, sep = ""))
     paste(family, member, sep = "-")
   })
+  return(res)
+}
+
+fix_vdj_genes2 <- function(.x) {
+
+  res <- stringr::str_replace_all({{ .x }}, ",", ", ")
+  res <- stringr::str_replace_all(res, "-([0])([0-9])", "-\\2")
+  res <- stringr::str_replace_all(res, "([VDJ])([0])([0-9])", "\\1\\3")
+  res <- stringr::str_replace_all(res, "TCR", "TR")
+  res <- stringr::str_replace_all(res, "\\*[0-9][0-9]", "")
+
   return(res)
 }
 
