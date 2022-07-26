@@ -6,7 +6,11 @@
 #'   the authors, evaluates only sequences that are between 12 and 17 amino
 #'   acids in length and that evaluation is performed on sequences as they are,
 #'   in their linear, native states without first being adjusted for length by
-#'   IMGT unique numbering rules for JUNCTIONS.
+#'   IMGT unique numbering rules for JUNCTIONS. It was also discovered that the
+#'   original version of this function as written by the authors would fail to
+#'   produce "vgene scores", resulting in incorrect overall scores, if allele
+#'   identifiers were part of the V gene names. This was corrected in this
+#'   implementation of the calculation.
 #'
 #' @param .data A data frame (and/or a tibble). This is the input TCR sequence
 #'   data that will be used to calculate TiRP scores. The format must conform to

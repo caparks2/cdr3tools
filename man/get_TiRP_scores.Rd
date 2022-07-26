@@ -37,7 +37,11 @@ A special note should be made to consider that this function, as written by
 the authors, evaluates only sequences that are between 12 and 17 amino
 acids in length and that evaluation is performed on sequences as they are,
 in their linear, native states without first being adjusted for length by
-IMGT unique numbering rules for JUNCTIONS.
+IMGT unique numbering rules for JUNCTIONS. It was also discovered that the
+original version of this function as written by the authors would fail to
+produce "vgene scores", resulting in incorrect overall scores, if allele
+identifiers were part of the V gene names. This was corrected in this
+implementation of the calculation.
 }
 \examples{
 # Confirm the proper format for the input data
