@@ -38,10 +38,15 @@ the authors, evaluates only sequences that are between 12 and 17 amino
 acids in length and that evaluation is performed on sequences as they are,
 in their linear, native states without first being adjusted for length by
 IMGT unique numbering rules for JUNCTIONS. It was also discovered that the
-original version of this function as written by the authors would fail to
-produce "vgene scores", resulting in incorrect overall scores, if allele
-identifiers were part of the V gene names. This was corrected in this
-implementation of the calculation.
+original version of this function as would fail to produce "vgene scores",
+resulting in incorrect overall scores, if allele identifiers were part of
+the V gene names. This was corrected in this implementation of the
+calculation. Additionally, the function has been modified to use IMGT
+conventions in naming of V genes and will check this for you. Further
+changes have been added so that errors result in informative messages, the
+input can now accept multiple data files, the output can be simple or
+detailed depending on user's choice, and a much speedier overall execution
+time has been achieved.
 }
 \examples{
 # Confirm the proper format for the input data
@@ -61,7 +66,9 @@ https://www.nature.com/articles/s41590-022-01129-x
 https://github.com/immunogenomics/TiRP
 }
 \author{
-Kaitlyn A. Lagattuta, Joyce B. Kang, Aparna Nathan (Center for Data
-Sciences, Brigham and Women’s Hospital, Boston, MA, USA)
+Kaitlyn A. Lagattuta
+Joyce B. Kang,
+Aparna Nathan
+Center for Data Sciences, Brigham and Women’s Hospital, Boston, MA, USA
 Christopher Parks (rewritten and improved for use in this package.)
 }
