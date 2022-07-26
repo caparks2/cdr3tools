@@ -92,11 +92,11 @@ get_TiRP_scores_internal <- function(.data, .details) {
   #   data$vgene <- as.character(data[, 1])
   # }
 
-  if (any(stringr::str_detect(data[, 1], "TCRBV|\\*[0-9][0-9]"))) {
+  # if (any(stringr::str_detect(data[, 1], "TCRBV|\\*[0-9][0-9]"))) {
     data$vgene <- fix_vdj_genes2(data[, 1])
-  } else {
-    data$vgene <- as.character(data[, 1])
-  }
+  # } else {
+  #   data$vgene <- as.character(data[, 1])
+  # }
 
 
   ## CDR3 sequence
