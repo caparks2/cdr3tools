@@ -147,9 +147,9 @@ get_TiRP_scores_internal <- function(.data, .details) {
   data <- dplyr::left_join(data, touse[, c("feat", "metabeta")], by = "feat")
   colnames(data)[ncol(data)] <- "vgene_score"
   data$vgene_score <- sapply(data$vgene_score, function(x) ifelse(is.na(x), 0, x))
-  if (nrow(data[data$vgene_score != 0, ]) == 0) {
-    stop("Unidentifiable TRBV genes.")
-  }
+  # if (nrow(data[data$vgene_score != 0, ]) == 0) {
+  #   stop("Unidentifiable TRBV genes.")
+  # }
 
   data$feat <- paste("p107", substr(data$cdr3, 4, 4), sep = "")
   data <- dplyr::left_join(data, touse[, c("feat", "metabeta")], by = "feat")
