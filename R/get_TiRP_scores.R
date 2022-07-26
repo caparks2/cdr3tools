@@ -73,7 +73,7 @@ get_TiRP_scores_internal <- function(.data, .details) {
     amino_acids && not_nucleotides && not_v_genes
   }), drop = TRUE]
   data <- data.frame(v_gene = v_gene_col, cdr3 = cdr3_col)
-  data <- tidyr::drop_na(data, v_gene, cdr3)
+  data <- tidyr::drop_na(data, "v_gene", "cdr3")
 
   weights <- cdr3tools::TiRP_weights
 
