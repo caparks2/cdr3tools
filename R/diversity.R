@@ -151,7 +151,7 @@ repertoire_diversity_internal <- function(x, method, r) {
   if (inherits(x, "data.frame")) {
     x <- as.data.frame(x)
 
-    if (!grepl("templates|reads|copies|clones|counts", names(x), ignore.case = TRUE)) {
+    if (!any(grepl("templates|reads|copies|clones|counts", names(x), ignore.case = TRUE), na.rm = TRUE)) {
       rlang::abort(
         paste0(
           "x must either be a single data frame containing a column of sequence ",
