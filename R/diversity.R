@@ -43,10 +43,21 @@
 #'   slope (higher absolute value) indicates a more diverse repertoire, while a
 #'   shallow slope (lower absolute value) indicates a more clonal repertoire.
 #'
-#' @param .x Input. A numeric vector of counts. Counts may represent reads,
-#'   clone copies, or templates, etc of unique sequences (clonotypes or
-#'   rearrangments). Normalization to frequencies is not needed since this is
-#'   performed by the functions during calculation of each diversity measure.
+#' Normalization to frequencies is not needed
+#'   since this is performed by the functions during calculation of each
+#'   diversity measure.
+#'
+#' @param .x A data frame of antigen receptor sequencing data, minimally
+#'   containing a column with counts. Counts may represent reads, copies, or
+#'   templates etc of unique sequences (also called clonotypes or
+#'   rearrangments). Alternatively, `.x` may be a list of such data frames, a
+#'   single numeric vector of counts, or a list of numeric vectors of counts.
+#'   If a `.x` is a data frame of list of data frames the column containing
+#'   counts must be named one of the following:
+#'   \describe{
+#'   \item{Column containing counts}{named "reads", "copies", "templates",
+#'     "clones", or "counts".}
+#'   }
 #'
 #' @param .method A character string of one of the following options:
 #'   * \code{"shannons.clonality"}
@@ -59,15 +70,16 @@
 #'   * \code{"simpsons.equitability"}
 #'   * \code{"r20"}
 #'   * \code{"slope"}
+#'   See ?diversity_methods
 #'
-#'   Default value is "shannons.clonality".
+#'   Default is to return all diversity measures.
 #'
 #' @param .r A numeric vector of length 1. The fraction of top unique sequences
 #'   that, in their sum, account for the given `.r` proportion of total copies
 #'   (or reads or templates). Only used when `.method = "r20"`. Default value is
 #'   0.2.
 #'
-#' @returns A numeric vector of length 1.
+#' @returns A numeric vector of length 1, or a data frame of results.
 #'
 #' @examples
 #' template_counts <- c(100, 8, 3, 2, rep(1, times = 1e4))
@@ -87,28 +99,109 @@
 #' @seealso [cdr3tools::diversity_methods()]
 #' @family Repertoire Diversity
 #' @export
-repertoire_diversity <- function(.x, .method = diversity_methods(), .r = 0.2) {
+repertoire_diversity <- function(.x, .method = diversity_methods(), .r = 0.20) {
 
-  .method <- rlang::arg_match(.method)
+  x <- .x
+  method <- .method
+  r <- .r
 
-  result <- switch(.method,
-    shannons.entropy = shannons_entropy(.x),
-    shannons.diversity = shannons_diversity_index(.x),
-    shannons.clonality = shannons_clonality(.x),
-    simpsons.index = simpsons_index(.x),
-    gini.simpson = gini_simpson_index(.x),
-    simpsons.dominance = simpsons_dominance(.x),
-    simpsons.equitability = simpsons_equitability(.x),
-    simpsons.clonality = simpsons_clonality(.x),
-    r20 = r20(.x, .r),
-    slope = abundance_slope(.x)
+  if (!(inherits(x, "list") || inherits(x, "data.frame") || inherits(x, "numeric"))) {
+    rlang::abort(
+      paste0(
+        "x must either be a single data frame containing a column of sequence ",
+        "counts (named `templates`, `reads`, `copies`, `clones`, or `counts`)",
+        ", a list containing multiple of such data frames, a single numeric ",
+        "vector of sequence counts, or a list containing multiple of such numeric ",
+        "vectors."
+      )
     )
+  }
 
+  if (inherits(x, "list")) {
+    result <- lapply(x, function(x) repertoire_diversity_internal(x, method, r))
+    result <- do.call(rbind, result)
+    if (!is.null(names(x))) {
+      result <- cbind(ID = names(x), result)
+    }
+    result <- tibble::as_tibble(result)
+    # names(result) <- method
+    return(result)
+  }
+
+  if (inherits(x, "data.frame")) {
+    result <- repertoire_diversity_internal(x, method, r)
+    result <- tibble::as_tibble(result)
+    return(result)
+  }
+
+  if (inherits(x, "numeric")) {
+    result <- repertoire_diversity_internal(x, method, r)
+    if (length(names(result)) > 1) {
+      result <- tibble::as_tibble(result)
+      return(result)
+    }
+    result <- as.numeric(result)
+    return(result)
+  }
+
+}
+
+repertoire_diversity_internal <- function(x, method, r) {
+
+  if (inherits(x, "data.frame")) {
+    x <- as.data.frame(x)
+
+    if (!grepl("templates|reads|copies|clones|counts", names(x), ignore.case = TRUE)) {
+      rlang::abort(
+        paste0(
+          "x must either be a single data frame containing a column of sequence ",
+          "counts (named `templates`, `reads`, `copies`, `clones`, or `counts`)",
+          ", a list containing multiple of such data frames, a single numeric ",
+          "vector of sequence counts, or a list containing multiple of such numeric ",
+          "vectors."
+        )
+      )
+    }
+
+    counts_col <- grep("templates|reads|copies|clones|counts", names(x), ignore.case = TRUE)
+
+    if (length(counts_col) > 1) {
+      rlang::abort("There must be only one column containing counts.")
+    }
+
+    x <- x[[counts_col]]
+  }
+
+  method <- rlang::arg_match(method, diversity_methods(), multiple = TRUE)
+
+  result <- lapply(
+    method,
+    # FUN.VALUE = numeric(1),
+    # USE.NAMES = TRUE,
+    FUN = function(method) {
+      switch(method,
+        shannons.entropy = shannons_entropy(x),
+        shannons.diversity = shannons_diversity_index(x),
+        shannons.clonality = shannons_clonality(x),
+        simpsons.index = simpsons_index(x),
+        gini.simpson = gini_simpson_index(x),
+        simpsons.dominance = simpsons_dominance(x),
+        simpsons.equitability = simpsons_equitability(x),
+        simpsons.clonality = simpsons_clonality(x),
+        r20 = r20(x, r),
+        slope = abundance_slope(x),
+        rlang::abort("No valid method detected. see ?diversity_methods")
+      )
+    }
+  )
+
+  names(result) <- method
+  result <- as.data.frame(result, row.names = NULL)
   return(result)
 }
 
-shannons_entropy <- function(.x) {
-  x <- .x[.x > 0]
+shannons_entropy <- function(x) {
+  x <- x[x > 0]
   S <- length(x)
   P <- x / sum(x)
   Hmax <- log2(S)
@@ -116,8 +209,8 @@ shannons_entropy <- function(.x) {
   return(H)
 }
 
-shannons_diversity_index <- function(.x) {
-  x <- .x[.x > 0]
+shannons_diversity_index <- function(x) {
+  x <- x[x > 0]
   S <- length(x)
   P <- x / sum(x)
   Hmax <- log(S)
@@ -125,8 +218,8 @@ shannons_diversity_index <- function(.x) {
   return(H)
 }
 
-shannons_clonality <- function(.x) {
-  x <- .x[.x > 0]
+shannons_clonality <- function(x) {
+  x <- x[x > 0]
   S <- length(x)
   P <- x / sum(x)
   Hmax <- log2(S)
@@ -136,31 +229,31 @@ shannons_clonality <- function(.x) {
   return(C)
 }
 
-simpsons_index <- function(.x) {
-  x <- .x[.x > 0]
+simpsons_index <- function(x) {
+  x <- x[x > 0]
   P <- x / sum(x)
   D1 <- sum(P * P)
   return(D1)
 }
 
-gini_simpson_index <- function(.x) {
-  x <- .x[.x > 0]
+gini_simpson_index <- function(x) {
+  x <- x[x > 0]
   P <- x / sum(x)
   D1 <- sum(P * P)
   GS <- 1 - D1
   return(GS)
 }
 
-simpsons_dominance <- function(.x) {
-  x <- .x[.x > 0]
+simpsons_dominance <- function(x) {
+  x <- x[x > 0]
   P <- x / sum(x)
   D1 <- sum(P * P)
   D2 <- 1 / D1
   return(D2)
 }
 
-simpsons_equitability <- function(.x) {
-  x <- .x[.x > 0]
+simpsons_equitability <- function(x) {
+  x <- x[x > 0]
   S <- length(x)
   P <- x / sum(x)
   D1 <- sum(P * P)
@@ -169,27 +262,27 @@ simpsons_equitability <- function(.x) {
   return(E)
 }
 
-simpsons_clonality <- function(.x) {
-  x <- .x[.x > 0]
+simpsons_clonality <- function(x) {
+  x <- x[x > 0]
   P <- x / sum(x)
   D1 <- sum(P * P)
   return(sqrt(D1))
 }
 
-r20 <- function(.x, .r) {
-  x <- .x[.x > 0]
+r20 <- function(x, r) {
+  x <- x[x > 0]
   S <- length(x)
   P <- x / sum(x)
   P <- sort(P, decreasing = TRUE)
   EP <- cumsum(P)
-  N <- length(which(EP <= .r))
+  N <- length(which(EP <= r))
   R <- N / S
   return(R)
 }
 
 #' @importFrom rlang .data
-abundance_slope <- function(.x) {
-  data <- tibble::tibble(templates = {{ .x }}) %>%
+abundance_slope <- function(x) {
+  data <- tibble::tibble(templates = {{ x }}) %>%
     dplyr::filter(.data$templates > 0) %>%
     dplyr::mutate(template_fraction = .data$templates / sum(.data$templates)) %>%
     dplyr::group_by(.data$template_fraction, .data$templates) %>%

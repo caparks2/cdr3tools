@@ -7,10 +7,17 @@
 repertoire_diversity(.x, .method = diversity_methods(), .r = 0.2)
 }
 \arguments{
-\item{.x}{Input. A numeric vector of counts. Counts may represent reads,
-clone copies, or templates, etc of unique sequences (clonotypes or
-rearrangments). Normalization to frequencies is not needed since this is
-performed by the functions during calculation of each diversity measure.}
+\item{.x}{A data frame of antigen receptor sequencing data, minimally
+containing a column with counts. Counts may represent reads, copies, or
+templates etc of unique sequences (also called clonotypes or
+rearrangments). Alternatively, \code{.x} may be a list of such data frames, a
+single numeric vector of counts, or a list of numeric vectors of counts.
+If a \code{.x} is a data frame of list of data frames the column containing
+counts must be named one of the following:
+\describe{
+\item{Column containing counts}{named "reads", "copies", "templates",
+"clones", or "counts".}
+}}
 
 \item{.method}{A character string of one of the following options:
 \itemize{
@@ -24,9 +31,10 @@ performed by the functions during calculation of each diversity measure.}
 \item \code{"simpsons.equitability"}
 \item \code{"r20"}
 \item \code{"slope"}
+See ?diversity_methods
 }
 
-Default value is "shannons.clonality".}
+Default is to return all diversity measures.}
 
 \item{.r}{A numeric vector of length 1. The fraction of top unique sequences
 that, in their sum, account for the given \code{.r} proportion of total copies
@@ -34,7 +42,7 @@ that, in their sum, account for the given \code{.r} proportion of total copies
 0.2.}
 }
 \value{
-A numeric vector of length 1.
+A numeric vector of length 1, or a data frame of results.
 }
 \description{
 Numeric measures of species diversity derived from information theory
@@ -80,6 +88,10 @@ resulting from linear regression of the log transformed abundance and
 frequency variables quantifies the diversity of the repertoire. A steep
 slope (higher absolute value) indicates a more diverse repertoire, while a
 shallow slope (lower absolute value) indicates a more clonal repertoire.
+
+Normalization to frequencies is not needed
+since this is performed by the functions during calculation of each
+diversity measure.
 }
 \examples{
 template_counts <- c(100, 8, 3, 2, rep(1, times = 1e4))
