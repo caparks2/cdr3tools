@@ -53,6 +53,7 @@ https://www.imgt.org/vquest/refseqh.html
 
 Other IMGT: 
 \code{\link{imgt_add_junction_gaps}()},
+\code{\link{imgt_format_gene_names}()},
 \code{\link{imgt_simple_headers}()}
 }
 \author{

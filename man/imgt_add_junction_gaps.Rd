@@ -99,6 +99,7 @@ PMID: 14681396
 {imgt_simple_headers()} {imgt_get_ref_seqs()}
 
 Other IMGT: 
+\code{\link{imgt_format_gene_names}()},
 \code{\link{imgt_get_ref_seqs}()},
 \code{\link{imgt_simple_headers}()}
 }

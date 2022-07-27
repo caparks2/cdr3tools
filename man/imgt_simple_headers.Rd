@@ -50,6 +50,7 @@ https://www.imgt.org/IMGTindex/Fasta.php
 
 Other IMGT: 
 \code{\link{imgt_add_junction_gaps}()},
+\code{\link{imgt_format_gene_names}()},
 \code{\link{imgt_get_ref_seqs}()}
 }
 \author{
