@@ -85,7 +85,9 @@ read_immunoseq <- function(.path, .functional = TRUE) {
         dplyr::mutate(
           frequency = .data$templates / sum(.data$templates),
           .after = .data$templates
-        )
+        ) %>%
+        # sort by frequency
+        dplyr::arrange(dplyr::desc(.data$frequency))
     }
   )
 
