@@ -35,19 +35,19 @@ Non-canonical sequences for which the conserved 2nd-CYS and or J-PHE/J-TRP
 cannot be identified can either removed or left as is.
 }
 \examples{
-imgt_add_junction_gaps(tcr_seqs$CDR3.aa)
+imgt_align_junctions(tcr_seqs$CDR3.aa)
 
-imgt_add_junction_gaps(c(tcr_seqs$CDR3.aa, "LRQQLEREGRYNEQFF"))
+imgt_align_junctions(c(tcr_seqs$CDR3.aa, "LRQQLEREGRYNEQFF"))
 
-imgt_add_junction_gaps(c(tcr_seqs$CDR3.aa, "LRQQLEREGRYNEQFF"),
-                       .rm_non_canonicals = TRUE)
+imgt_align_junctions(c(tcr_seqs$CDR3.aa, "LRQQLEREGRYNEQFF"),
+                     .rm_non_canonicals = TRUE)
 
 try(
-  imgt_add_junction_gaps("ATCATATTATATATCG")
+  imgt_align_junctions("ATCATATTATATATCG")
 )
 
 try(
-  imgt_add_junction_gaps(c(104:118))
+  imgt_align_junctions(c(104:118))
 )
 
 }
