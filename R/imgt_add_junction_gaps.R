@@ -1,4 +1,4 @@
-#' Insert Length Adjustment Gaps in IMGT JUNCTION sequences
+#' Insert Alignment Gaps in IMGT JUNCTION sequences
 #'
 #' Adjust IMGT JUNCTION sequences for length by inserting gaps according to the
 #'   IMGT unique numbering rules. Vectorised for JUNCTION sequences and their

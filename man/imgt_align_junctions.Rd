@@ -2,7 +2,7 @@
 % Please edit documentation in R/imgt_add_junction_gaps.R
 \name{imgt_align_junctions}
 \alias{imgt_align_junctions}
-\title{Insert Length Adjustment Gaps in IMGT JUNCTION sequences}
+\title{Insert Alignment Gaps in IMGT JUNCTION sequences}
 \usage{
 imgt_align_junctions(.x, .rm_non_canonicals = FALSE)
 }
