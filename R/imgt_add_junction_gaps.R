@@ -65,7 +65,7 @@
 #'
 #' @family IMGT
 #' @export
-imgt_add_junction_gaps <- function(.x, .rm_non_canonicals = FALSE) {
+imgt_align_junctions <- function(.x, .rm_non_canonicals = FALSE) {
 
   x <- .x
   rm_non_canonicals <- .rm_non_canonicals
