@@ -52,7 +52,7 @@ https://www.imgt.org/vquest/refseqh.html
 {imgt_add_junction_gaps()} {imgt_simple_headers()}
 
 Other IMGT: 
-\code{\link{imgt_add_junction_gaps}()},
+\code{\link{imgt_align_junctions}()},
 \code{\link{imgt_format_gene_names}()},
 \code{\link{imgt_simple_headers}()}
 }
