@@ -28,41 +28,24 @@ IMGT unique numbering rules. Vectorised for JUNCTION sequences and their
 gap-inserted, length-adjusted replacements.
 }
 \details{
-IMGT JUNCTION sequences shorter than 15 amino acids are modified by gap
-insertions, following the IMGT unique numbering rules for JUNCTION
-sequences, to a total length of 15 positions. The gap insertion character
-used is ".". Non-canonical sequences for which the conserved 2nd-CYS and or
-J-PHE/J-TRP cannot be identified can either removed or left as is without
-being adjusted. It is recommended to first filter these sequences out if
-downstream analysis depends on comparing Junction sequences that have been
-length adjusted using this function (see examples). IMGT unique numbering
-for JUNCTION sequences accommodates sequences longer than 15 amino acids,
-but that is not implemented here yet. JUNCTION sequences longer than 15
-positions are left as is.
+IMGT JUNCTION sequences are modified by gap insertions, following the IMGT
+unique numbering rules for JUNCTION sequences, up to the maximum length of
+the longest sequence. The gap insertion character used is ".".
+Non-canonical sequences for which the conserved 2nd-CYS and or J-PHE/J-TRP
+cannot be identified can either removed or left as is.
 }
 \examples{
-# Simple case of 1 sequence:
-imgt_add_junction_gaps("CASSSGTAPFSFW")
+imgt_add_junction_gaps(tcr_seqs$CDR3.aa)
 
-# Multiple sequences containing short, long, and non-canonical JUNCTIONS:
-cdr3_seqs <- c(
-  "CASSF",
-  "CASSGEKLFF",
-  "CASSKPDRGIYGYTF",
-  "TGPLHF",
-  "CASSQETRYDFLTIDTGGKKKNTEAFF"
-)
-imgt_add_junction_gaps(cdr3_seqs)
+imgt_add_junction_gaps(c(tcr_seqs$CDR3.aa, "LRQQLEREGRYNEQFF"))
 
-# Remove non-canonical JUNCTIONS:
-imgt_add_junction_gaps(cdr3_seqs, .rm_non_canonicals = TRUE)
+imgt_add_junction_gaps(c(tcr_seqs$CDR3.aa, "LRQQLEREGRYNEQFF"),
+                       .rm_non_canonicals = TRUE)
 
-# Input sequences must be amino acids:
 try(
   imgt_add_junction_gaps("ATCATATTATATATCG")
 )
 
-# Input sequences must be a character vector:
 try(
   imgt_add_junction_gaps(c(104:118))
 )
@@ -96,8 +79,6 @@ receptor and MHC structural data", Nucl. Acids. Res., 32, D208-D210 (2004).
 PMID: 14681396
 }
 \seealso{
-{imgt_simple_headers()} {imgt_get_ref_seqs()}
-
 Other IMGT: 
 \code{\link{imgt_format_gene_names}()},
 \code{\link{imgt_get_ref_seqs}()},
