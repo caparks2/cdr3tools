@@ -114,6 +114,21 @@ imgt_align_junctions <- function(.x, .rm_non_canonicals = FALSE) {
     }
   }
 
+  if (max(nchar(x), na.rm = TRUE) < 15) {
+    x <- c(x, "AAAAAAAAAAAAAAA")
+    res <- imgt_align_junctions_internal(x, rm_non_canonicals)
+    res <- res[-length(res)]
+    return(res)
+  }
+
+  res <- imgt_align_junctions_internal(x, rm_non_canonicals)
+  return(res)
+
+
+}
+
+imgt_align_junctions_internal <- function(x, rm_non_canonicals) {
+
   lengths <- max(nchar(x) - 1, na.rm = TRUE):2
   gaps <- 2:max(nchar(x) - 1, na.rm = TRUE) - 1
 
