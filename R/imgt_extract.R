@@ -32,6 +32,7 @@
 #'   subregions, either with alignment gaps or not.
 #' @examples
 #' imgt_extract(tcr_seqs$CDR3.aa)
+#' imgt_extract(tcr_seqs$CDR3.aa, .aligned = TRUE)
 #' @author Christopher Parks
 #' @references
 #' https://www.imgt.org/IMGTScientificChart/Numbering/IMGTIGVLsuperfamily.html

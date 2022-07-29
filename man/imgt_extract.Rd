@@ -54,6 +54,7 @@ positions between them.
 }
 \examples{
 imgt_extract(tcr_seqs$CDR3.aa)
+imgt_extract(tcr_seqs$CDR3.aa, .aligned = TRUE)
 }
 \references{
 https://www.imgt.org/IMGTScientificChart/Numbering/IMGTIGVLsuperfamily.html
