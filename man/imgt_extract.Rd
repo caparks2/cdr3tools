@@ -36,7 +36,9 @@ results with alignment gaps.}
 \value{
 A character vector the same length as \code{.x} with extracted JUNCTION
 subregions, either with alignment gaps or not. Returns a list when \code{.x} is
-a valid list. Returns a data frame with \code{.x} is a valid data frame.
+a valid list. Returns a data frame with \code{.x} is a valid data frame. When
+returning a data frame, the results are stored in a column named
+"CDR3.aa.sub".
 }
 \description{
 Extract subregions from IMGT JUNCTION sequences in a manner consistent with
