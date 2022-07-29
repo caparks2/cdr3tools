@@ -80,6 +80,7 @@ PMID: 14681396
 }
 \seealso{
 Other IMGT: 
+\code{\link{imgt_extract}()},
 \code{\link{imgt_format_gene_names}()},
 \code{\link{imgt_get_ref_seqs}()},
 \code{\link{imgt_simple_headers}()}

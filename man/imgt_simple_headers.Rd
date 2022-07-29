@@ -46,10 +46,9 @@ imgt_simple_headers(head(vgenes), .include_species = TRUE)
 https://www.imgt.org/IMGTindex/Fasta.php
 }
 \seealso{
-{imgt_add_junction_gaps()} {imgt_get_ref_seqs()}
-
 Other IMGT: 
 \code{\link{imgt_align_junctions}()},
+\code{\link{imgt_extract}()},
 \code{\link{imgt_format_gene_names}()},
 \code{\link{imgt_get_ref_seqs}()}
 }

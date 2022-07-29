@@ -33,8 +33,6 @@
 #' https://www.imgt.org/vquest/refseqh.html
 #'
 #' @family IMGT
-#' @seealso {imgt_add_junction_gaps()} {imgt_simple_headers()}
-#'
 #' @export
 imgt_get_ref_seqs <- function(.file, .simplify_headers = TRUE,
                               .include_species = .simplify_headers) {

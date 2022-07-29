@@ -1,0 +1,97 @@
+#' Extract Subregions of JUNCTION sequences
+#'
+#' Extract subregions from IMGT JUNCTION sequences in a manner consistent with
+#'   IMGT unique numbering rules.
+#'
+#' By enforcing the IMGT unique numbering rules on JUNCTION sequences before
+#'   subsetting them, it can be assured that subregions extracted from multiple
+#'   sequences will have consistent positioning in the 3D structures of
+#'   TCR:pMHC complexes, allowing for fair comparisons between them. Comparisons
+#'   of unaligned sequences will usually result in sequence bias toward germline
+#'   elements (the somatic portions of CDR3 sequences). It is required to subset
+#'   JUNCTION sequences using the IMGT positions between the conserved 2nd-CYS
+#'   at position 104 and the J-TRP/J-PHE at position 118. At this time selecting
+#'   using the added positions between 111 and 112 (for example 112.3) is not
+#'   supported. Selections spanning 111 and 112 will return all the added
+#'   positions between them.
+#'
+#' @param .x A character vector of IMGT JUNCTION sequences defined by the
+#'   conserved 2nd-CYS at position 104 through the J-PHE or J-TRP at position
+#'   118.
+#' @param .start An integer in [104, 117]. The starting position marking the
+#'   beginning of the subregion to be extracted, including the starting
+#'   position.
+#' @param .end An integer in [105, 118]. The ending position marking the end of
+#'   the subregion to be extracted, including the ending position.
+#' @param .rm_non_canonicals A logical. `FALSE` (the default) keeps
+#'   non-canonical JUNCTION sequences. `TRUE` removes them and replaces with NA.
+#' @param .aligned A logical. `FALSE` (the default) returns results without
+#'   alignment gaps. This is useful for downstream analysis. `TRUE` returns
+#'   results with alignment gaps.
+#' @returns A character vector the same length as `.x` with extracted JUNCTION
+#'   subregions, either with alignment gaps or not.
+#' @examples
+#' imgt_extract(tcr_seqs$CDR3.aa)
+#' @author Christopher Parks
+#' @references
+#' https://www.imgt.org/IMGTScientificChart/Numbering/IMGTIGVLsuperfamily.html
+#'
+#' Lefranc M.-P., "Unique database numbering system for immunogenetic analysis",
+#'   Immunology Today, 18, 509 (1997). PMID: 9386342
+#'
+#' Lefranc M.-P., "The IMGT unique numbering for Immunoglobulins, T cell
+#'   receptors and Ig-like domains", The Immunologist, 7, 132-136 (1999).
+#'
+#' Lefranc, M.-P., Pommié, C., Ruiz, M., Giudicelli, V., Foulquier, E., Truong,
+#'   L., Thouvenin-Contet, V. and Lefranc, G., "IMGT unique numbering for
+#'   immunoglobulin and T cell receptor variable domains and Ig superfamily
+#'   V-like domains", Dev. Comp. Immunol., 27, 55-77 (2003). PMID: 12477501
+#'
+#' Ruiz, M. and Lefranc, M.-P. "IMGT gene identification and Colliers de Perles
+#'   of human immunoglobulin with known 3D structures", Immunogenetics, 53,
+#'   857-883 (2002). PMID: 11862387
+#'
+#' Kaas, Q. and Lefranc, M.-P. "IMGT Colliers de Perles: standardized
+#'   sequence-structure representations of the IgSF and MhcSF superfamily
+#'   domains", Current Bioinformatics, 2, 21-30 (2007).
+#'
+#' Kaas, Q., Ruiz, M. and Lefranc, M.-P. "IMGT/3Dstructure-DB and
+#'   IMGT/StructuralQuery, a database and a tool for immunoglobulin, T cell
+#'   receptor and MHC structural data", Nucl. Acids. Res., 32, D208-D210 (2004).
+#'   PMID: 14681396
+#'
+#' @family IMGT
+#' @export
+imgt_extract <- function(.x, .start = 108, .end = 112, .rm_non_canonicals = FALSE, .aligned = FALSE) {
+
+  x                 <- .x
+  start             <- .start - 103
+  end               <- .end - 119
+  aligned           <- .aligned
+  rm_non_canonicals <- .rm_non_canonicals
+
+  if (!.start %in% 104:117) {
+    rlang::abort("`.start must be indicate one JUNCTION position from 104 to 117`")
+  }
+
+  if (!.end %in% 105:118) {
+    rlang::abort("`.end` must be indicate one JUNCTION position from 105 to 118`")
+  }
+
+  if (!.end - .start > 0) {
+    rlang::abort("`.start must come before `.end`")
+  }
+
+  if (!all(nchar(x) >= 15, any(grepl("\\.+", x), na.rm = TRUE), na.rm = TRUE)) {
+    x <- imgt_align_junctions(x, rm_non_canonicals)
+  }
+
+  x <- stringr::str_sub(x, start, end)
+
+  if (!aligned) {
+    x <- gsub("\\.+", "", x)
+    return(x)
+  }
+
+  return(x)
+}

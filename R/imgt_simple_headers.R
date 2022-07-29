@@ -33,8 +33,6 @@
 #' @author Christopher Parks
 #'
 #' @family IMGT
-#' @seealso {imgt_add_junction_gaps()} {imgt_get_ref_seqs()}
-#'
 #' @references
 #' https://www.imgt.org/IMGTindex/Fasta.php
 #'
