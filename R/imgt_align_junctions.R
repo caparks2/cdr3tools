@@ -75,11 +75,15 @@ imgt_align_junctions <- function(.x, .rm_non_canonicals = FALSE) {
   }
 
   is_DNA <- any(stringr::str_detect(
-    x, stringr::regex("[[^ACTG]]", ignore_case = TRUE), negate = TRUE
+    x, stringr::regex("[^ACTG]", ignore_case = TRUE), negate = TRUE
   ))
 
   if (is_DNA) {
-    rlang::abort("Nucleotide sequences detected. Please enter translated, amino acid sequences")
+    rlang::abort("Nucleotide sequences detected. Please enter translated, IMGT JUNCTION sequences")
+  }
+
+  if (any(grepl("[^ACDEFGHIKLMNPQRSTVWY]", x), na.rm = TRUE)) {
+    rlang::abort("non IMGT JUNCTION sequences detected in input.")
   }
 
   non_canonicals <- stringr::str_which(
@@ -105,9 +109,9 @@ imgt_align_junctions <- function(.x, .rm_non_canonicals = FALSE) {
       rlang::warn(
         paste(
           length(non_canonicals), "non-canonical CDR3 sequences were detected.",
-          "Review them with",
-          paste0("'.x[c(", paste0(non_canonicals, collapse = ", "), ")]'"),
-          "(be sure to change '.x' to your input vector object).",
+          # "Review them with",
+          # paste0("'.x[c(", paste0(non_canonicals, collapse = ", "), ")]'"),
+          # "(be sure to change '.x' to your input vector object).",
           "Set '.rm_non_canonicals = TRUE' to remove them if needed."
         )
       )
