@@ -18,10 +18,10 @@
 #' @param .x A character vector of IMGT JUNCTION sequences defined by the
 #'   conserved 2nd-CYS at position 104 through the J-PHE or J-TRP at position
 #'   118.
-#' @param .start An integer in [104, 117]. The starting position marking the
+#' @param .start An integer in \[104, 117\]. The starting position marking the
 #'   beginning of the subregion to be extracted, including the starting
 #'   position.
-#' @param .end An integer in [105, 118]. The ending position marking the end of
+#' @param .end An integer in \[105, 118\]. The ending position marking the end of
 #'   the subregion to be extracted, including the ending position.
 #' @param .rm_non_canonicals A logical. `FALSE` (the default) keeps
 #'   non-canonical JUNCTION sequences. `TRUE` removes them and replaces with NA.

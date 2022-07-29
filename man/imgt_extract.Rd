@@ -17,11 +17,11 @@ imgt_extract(
 conserved 2nd-CYS at position 104 through the J-PHE or J-TRP at position
 118.}
 
-\item{.start}{An integer in \link{104, 117}. The starting position marking the
+\item{.start}{An integer in [104, 117]. The starting position marking the
 beginning of the subregion to be extracted, including the starting
 position.}
 
-\item{.end}{An integer in \link{105, 118}. The ending position marking the end of
+\item{.end}{An integer in [105, 118]. The ending position marking the end of
 the subregion to be extracted, including the ending position.}
 
 \item{.rm_non_canonicals}{A logical. \code{FALSE} (the default) keeps
