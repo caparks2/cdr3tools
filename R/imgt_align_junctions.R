@@ -150,7 +150,7 @@ imgt_align_junctions_internal <- function(x, rm_non_canonicals) {
   )
 
   pattern <- mapply(function(n1, n2) {
-    paste0("(^[[", aa, "]]{1}[[", aa, "]]{", n1, "})([[", aa, "]]{", n2, "}[[", aa, "]]{1}$)")
+    paste0("(^[", aa, "]{1}[", aa, "]{", n1, "})([", aa, "]{", n2, "}[", aa, "]{1}$)")
   }, n1 = n1, n2 = n2
   )
 
