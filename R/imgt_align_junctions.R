@@ -159,6 +159,16 @@ imgt_align_junctions_internal <- function(x, rm_non_canonicals) {
   )
 
   replacement <- stats::setNames(replacement, pattern)
+
   x <- stringr::str_replace_all(x, stringr::regex(replacement, ignore_case = TRUE))
+
+  if (any(nchar(x) < max(nchar(x), na.rm = TRUE))) {
+    x[nchar(x) < max(nchar(x), na.rm = TRUE)] <- stringr::str_pad(
+      string = x[nchar(x) < max(nchar(x), na.rm = TRUE)],
+      width = max(nchar(x), na.rm = TRUE),
+      side = "right",
+      pad = "."
+    )
+  }
   return(x)
 }
