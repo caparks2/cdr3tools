@@ -31,11 +31,12 @@
 #' @export
 hydrophobicity <- function(seq, scale = "Wimley") {
   # Loading hydrophobicity scales
-  Hydrophobicity <- AAdata$Hydrophobicity
+  Hydrophobicity <- AAdata[["Hydrophobicity"]]
   # Setting the hydrophobicity scale
   scale <- match.arg(scale, names(Hydrophobicity))
   # Split sequence by aminoacids
   # seq <- aaCheck(seq)
+  seq <- strsplit(seq, "")
   # Sum the hydrophobicity of each amino acid and divide them between the sequence length
   # Return the GRAVY value
   h <-
