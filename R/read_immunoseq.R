@@ -109,9 +109,6 @@ check_immunoseq_version <- function(files) {
     )
   }
 
-  #' Check Immunoseq Version
-  #'
-  #' @keywords internal
   version_check <- lapply(
     files, function(x) {
 
@@ -138,9 +135,6 @@ check_immunoseq_version <- function(files) {
   return(all(unlist(version_check)))
 }
 
-#' Fix Immunoseq VDJ gene names
-#'
-#' @keywords internal
 fix_vdj_genes <- function(.x) {
 
   res <- stringr::str_replace_all({{ .x }}, ",", ", ")

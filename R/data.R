@@ -48,3 +48,11 @@
 #' @format R data object. A data.frame.
 #'
 "tcr_seqs"
+
+#' Properties, scales and indices for the 20 naturally occurring amino acids
+#'
+#' A list with a collection of properties, scales and indices for the 20 naturally occurring amino acids from various sources.
+#'
+#' @format A list as follows of biochemical properites
+#'
+"AAdata"
