@@ -127,7 +127,7 @@ check_immunoseq_version <- function(files) {
       header <- readLines(con = con, n = 1)
       close(con)
       header <- strsplit(header, "\t")[[1]]
-      matches <- header %in% immunoseq_export_v1_col_names
+      matches <- header %in% cdr3tools::immunoseq_export_v1_col_names
       all(matches)
     }
   )

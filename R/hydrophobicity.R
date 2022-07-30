@@ -31,7 +31,7 @@
 #' @export
 hydrophobicity <- function(seq, scale = "Wimley") {
   # Loading hydrophobicity scales
-  Hydrophobicity <- AAdata[["Hydrophobicity"]]
+  Hydrophobicity <- cdr3tools::AAdata[["Hydrophobicity"]]
   # Setting the hydrophobicity scale
   scale <- match.arg(scale, names(Hydrophobicity))
   # Split sequence by aminoacids
