@@ -35,8 +35,7 @@ hydrophobicity <- function(seq, scale = "Wimley") {
   # Setting the hydrophobicity scale
   scale <- match.arg(scale, names(Hydrophobicity))
   # Split sequence by aminoacids
-  # seq <- aaCheck(seq)
-  seq <- strsplit(seq, "")
+  seq <- aaCheck(seq)
   # Sum the hydrophobicity of each amino acid and divide them between the sequence length
   # Return the GRAVY value
   h <-
@@ -44,4 +43,21 @@ hydrophobicity <- function(seq, scale = "Wimley") {
       (sum(Hydrophobicity[[scale]][seq], na.rm = TRUE) / length(seq))
     })
   return(unlist(h))
+}
+
+aaCheck <- function(seq){
+  if(!any(lengths(seq) > 1)){
+    seq <- toupper(seq)
+    seq <- gsub(pattern = "[[:space:]]+",replacement = "",x = seq)
+    seq <- strsplit(x = seq,split = "")
+  } else {
+    seq <- lapply(seq,toupper)
+  }
+  check <- unlist(lapply(seq,function(sequence){
+    !all(sequence%in%c("A" ,"C" ,"D" ,"E" ,"F" ,"G" ,"H" ,"I" ,"K" ,"L" ,"M" ,"N" ,"P" ,"Q" ,"R" ,"S" ,"T" ,"V" ,"W" ,"Y", "-"))
+  }))
+  if(sum(check) > 0){
+    sapply(which(check == TRUE),function(sequence){warning(paste0("Sequence ",sequence," has unrecognized amino acid types. Output value might be wrong calculated"),call. = FALSE)})
+  }
+  return(seq)
 }
