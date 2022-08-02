@@ -98,7 +98,8 @@ get_TiRP_scores_internal <- function(data, details) {
   if (!all(grepl("^[ACDEFGHIKLMNPQRSTVWY]+$", data[!is.na(data[, 2]), 2]))) {
     rlang::abort(
       paste(
-        "Column 2 must be a character vector of JUNCTION sequences."
+        "Column 2 must be a character vector of IMGT JUNCTION sequences.",
+        "The only characters allowed are in the set [ACDEFGHIKLMNPQRSTVWY]."
       )
     )
   }
@@ -113,7 +114,7 @@ get_TiRP_scores_internal <- function(data, details) {
   check_v_genes <- sub("vgene", "", weights[grep("vgene", weights$feat), "feat"])
 
   if (!(sum(data[, 1] %in% check_v_genes) == length(data[, 1]))) {
-    data$vgene <- imgt_fix_gene_names(data[, 1])
+    data$vgene <- cdr3tools::imgt_format_gene_names(data[, 1])
   } else {
     data$vgene <- as.character(data[, 1])
   }
@@ -124,6 +125,10 @@ get_TiRP_scores_internal <- function(data, details) {
   # CDR3 length
   data$length <- nchar(data$cdr3)
   data <- data[data$length >= 12 & data$length <= 17, ]
+
+  if (nrow(data) == 0) {
+    rlang::abort("Only sequences of lengths from 12 to 17 amino acids are analyzed. No such sequences were detected.")
+  }
 
   # Jmotif
   jmotifs <- gsub("Jmotif", "", weights$feat[grepl("Jmotif", weights$feat)])
@@ -167,9 +172,9 @@ get_TiRP_scores_internal <- function(data, details) {
 
   perc_terms <- touse$feat[grepl("perc_mid", touse$feat)]
   # data$perc_score <- sapply(1:nrow(data), function(x) sum(data[x, perc_terms] * touse[perc_terms, c("metabeta")]))
-  perc_score <- do.call(rbind, apply(data[, perc_terms], 1, function(rows) {
+  perc_score <- do.call(rbind, as.list(apply(data[, perc_terms], 1, function(rows) {
     rows * touse[perc_terms, c("metabeta")]
-  }, simplify = FALSE))
+  }, simplify = FALSE)))
   data$perc_score <- rowSums(perc_score)
 
   pos_terms <- list()
@@ -274,37 +279,10 @@ get_TiRP_scores_internal <- function(data, details) {
   return(data)
 }
 
-# reformat_vgene_cp_modified <- function(vg) {
-#   vg <- as.character(vg)
-#   vgene <- gsub("TRBV", "TCRBV", vg)
-#   vgene <- gsub("\\*0[[:digit:]]$", "", vgene)
-#   info <- strsplit(vgene, "-")
-#   res <- vapply(X = info, FUN.VALUE = character(1), FUN = function(.info) {
-#     family <- .info[1]
-#     member <- ifelse(length(.info) == 2, .info[2], "01")
-#     family <- ifelse(nchar(family) == 6, paste("TCRBV0", substr(family, 6, 6), sep = ""), family)
-#     member <- ifelse(substr(member, 1, 1) == "0", member, paste("0", member, sep = ""))
-#     paste(family, member, sep = "-")
-#   })
-#   return(res)
-# }
-
-# convert v gene names to IMGT conventions
-imgt_fix_gene_names <- function(.x) {
-  res <- stringr::str_replace_all({{ .x }}, ",", ", ")
-  res <- stringr::str_replace_all(res, "-([0])([0-9])", "-\\2")
-  res <- stringr::str_replace_all(res, "([VDJ])([0])([0-9])", "\\1\\3")
-  res <- stringr::str_replace_all(res, "TCR", "TR")
-  res <- stringr::str_replace_all(res, "\\*[0-9][0-9]", "")
-  return(res)
-}
-
-
 get_pos_score_CP <- function(data, touse, pos_terms) {
   term_indices <- pos_terms[nchar(data) - 1]
   residues <- strsplit(data, "")
-  terms <- mapply(function(.x, .y) paste(.x, .y, sep = "_"), .x = term_indices, .y = residues)
-  sum(touse$metabeta[touse$feat %in% terms])
+  terms <- mapply(function(.x, .y) paste(.x, .y, sep = "_"), .x = term_indices, .y = residues, SIMPLIFY = FALSE)
   vapply(terms, function(terms) sum(touse$metabeta[touse$feat %in% terms]), numeric(1))
 }
 
