@@ -56,7 +56,7 @@ read_immunoseq <- function(.path, .functional = TRUE) {
         show_col_types = FALSE,
         progress = FALSE,
         col_select = c(
-          "sample_name", "frame_type", "templates", "cdr3_amino_acid",
+          "sample_name", "frame_type", "templates", "seq_reads", "cdr3_amino_acid",
           "cdr3_rearrangement", "v_resolved", "d_resolved", "j_resolved",
           "n1_index", "v_index", "d_index", "n2_index", "j_index",
           "n1_insertions", "n2_insertions", "rearrangement"
@@ -77,9 +77,9 @@ read_immunoseq <- function(.path, .functional = TRUE) {
     data, function(x) {
       x %>%
         dplyr::mutate(
-          v_resolved = fix_vdj_genes(.data$v_resolved),
-          d_resolved = fix_vdj_genes(.data$d_resolved),
-          j_resolved = fix_vdj_genes(.data$j_resolved)
+          v_resolved = cdr3tools::imgt_format_gene_names(.data$v_resolved),
+          d_resolved = cdr3tools::imgt_format_gene_names(.data$d_resolved),
+          j_resolved = cdr3tools::imgt_format_gene_names(.data$j_resolved)
         ) %>%
         # add a template frequency column
         dplyr::mutate(
@@ -133,14 +133,4 @@ check_immunoseq_version <- function(files) {
   )
 
   return(all(unlist(version_check)))
-}
-
-fix_vdj_genes <- function(.x) {
-
-  res <- stringr::str_replace_all({{ .x }}, ",", ", ")
-  res <- stringr::str_replace_all(res, "-([0])([0-9])", "-\\2")
-  res <- stringr::str_replace_all(res, "([VDJ])([0])([0-9])", "\\1\\3")
-  res <- stringr::str_replace_all(res, "TCR", "TR")
-
-  return(res)
 }
