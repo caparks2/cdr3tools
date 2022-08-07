@@ -4,7 +4,7 @@
 \alias{read_immunoseq}
 \title{Read Adaptive Biotechnologies Immunoseq Files}
 \usage{
-read_immunoseq(.path, .functional = TRUE)
+read_immunoseq(.path, .functional = NULL, .format_IMGT = NULL)
 }
 \arguments{
 \item{.path}{A character vector (string). The full or relative (for example,
@@ -12,9 +12,13 @@ if the working directory was set with \code{setwd()}) file path to a directory
 containing multiple Immunoseq v1 .tsv file exports. Alternatively, the full
 or relative file path to a single Immunoseq v1 .tsv file export.}
 
-\item{.functional}{A boolean. \code{TRUE} (the default) filters sequences for
+\item{.functional}{A logical. \code{TRUE} (the default) filters sequences for
 in-frame, functional sequences. \code{FALSE} leaves non-coding, out-of-frame
 sequences in.}
+
+\item{.format_IMGT}{A logical. \code{TRUE} (the default) indicates that VDJ gene
+names will be reformatted according to IMGT gene name conventions. \code{FALSE}
+leaves them as is.}
 }
 \value{
 if \code{.path} is a directory containing multiple files, a list of same
@@ -31,6 +35,13 @@ containing multiple files, the function reads them all into a named list.
 If only a path to one file is given, the function reads the file to a data
 frame. At this time, only Immunoseq v1 .tsv file exports are supported.
 }
+\seealso{
+Other Immunoseq: 
+\code{\link{diversity_methods}()},
+\code{\link{get_alloreactives}()},
+\code{\link{repertoire_diversity}()}
+}
 \author{
 Christopher Parks
 }
+\concept{Immunoseq}

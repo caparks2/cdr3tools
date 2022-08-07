@@ -5,8 +5,8 @@
 \alias{enquo}
 \alias{enquos}
 \alias{.data}
-\alias{:=}
 \alias{as_name}
+\alias{:=}
 \alias{as_label}
 \title{Tidy eval helpers}
 \description{

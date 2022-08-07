@@ -13,18 +13,30 @@
 #'  if the working directory was set with `setwd()`) file path to a directory
 #'  containing multiple Immunoseq v1 .tsv file exports. Alternatively, the full
 #'  or relative file path to a single Immunoseq v1 .tsv file export.
-#' @param .functional A boolean. `TRUE` (the default) filters sequences for
+#' @param .functional A logical. `TRUE` (the default) filters sequences for
 #'   in-frame, functional sequences. `FALSE` leaves non-coding, out-of-frame
 #'   sequences in.
+#' @param .format_IMGT A logical. `TRUE` (the default) indicates that VDJ gene
+#'   names will be reformatted according to IMGT gene name conventions. `FALSE`
+#'   leaves them as is.
 #'
 #' @author Christopher Parks
 #'
 #' @returns if `.path` is a directory containing multiple files, a list of same
 #'   length as the directory. if `.path` is a single file, a data frame.
+#' @family Immunoseq
 #' @export
-read_immunoseq <- function(.path, .functional = TRUE) {
+read_immunoseq <- function(.path, .functional = NULL, .format_IMGT = NULL) {
 
-  if (!dir.exists(.path)) {
+  if (is.null(.functional)) {
+    .functional <- TRUE
+  }
+
+  if (is.null(.format_IMGT)) {
+    .format_IMGT <- TRUE
+  }
+
+  if (!dir.exists(.path) && file.exists(.path)) {
     files <- .path
     file_names <- basename(.path)
     file_names <- stringr::str_remove_all(file_names, stringr::regex("\\.tsv", ignore_case = TRUE))
@@ -56,10 +68,11 @@ read_immunoseq <- function(.path, .functional = TRUE) {
         show_col_types = FALSE,
         progress = FALSE,
         col_select = c(
-          "sample_name", "frame_type", "templates", "seq_reads", "cdr3_amino_acid",
-          "cdr3_rearrangement", "v_resolved", "d_resolved", "j_resolved",
+          "sample_name", "frame_type", "templates", "seq_reads", "cdr3_rearrangement",
+          "cdr3_amino_acid", "v_resolved", "d_resolved", "j_resolved",
           "n1_index", "v_index", "d_index", "n2_index", "j_index",
-          "n1_insertions", "n2_insertions", "rearrangement"
+          "n1_insertions", "n2_insertions", "rearrangement", "extended_rearrangement",
+          "rearrangement_trunc"
         )
       )
     }
@@ -73,14 +86,20 @@ read_immunoseq <- function(.path, .functional = TRUE) {
   }
 
   # correct VDJ gene names to IMGT conventions.
-  data <- purrr::map(
-    data, function(x) {
+  if (.format_IMGT) {
+    data <- purrr::map(data, function(x) {
+        x %>%
+          dplyr::mutate(
+            v_resolved = cdr3tools::imgt_format_gene_names(.data$v_resolved),
+            d_resolved = cdr3tools::imgt_format_gene_names(.data$d_resolved),
+            j_resolved = cdr3tools::imgt_format_gene_names(.data$j_resolved)
+          )
+      }
+    )
+  }
+
+  data <- purrr::map(data, function(x) {
       x %>%
-        dplyr::mutate(
-          v_resolved = cdr3tools::imgt_format_gene_names(.data$v_resolved),
-          d_resolved = cdr3tools::imgt_format_gene_names(.data$d_resolved),
-          j_resolved = cdr3tools::imgt_format_gene_names(.data$j_resolved)
-        ) %>%
         # add a template frequency column
         dplyr::mutate(
           frequency = .data$templates / sum(.data$templates),
@@ -91,9 +110,9 @@ read_immunoseq <- function(.path, .functional = TRUE) {
     }
   )
 
-  # if (length(data) == 1) {
-  #   data <- data[[1]]
-  # }
+  if (inherits(data, "list") && length(data) == 1) {
+    data <- data[[1]]
+  }
 
   return(data)
 }
@@ -104,7 +123,7 @@ check_immunoseq_version <- function(files) {
     rlang::abort(
       paste(
         ".path must be a path to a directory of immunoseq v1 exported .tsv",
-        "text files or a path to a single immunoseq v1 exported .tsv text file"
+        "text files or a path to a single immunoseq v1 exported .tsv text file."
       )
     )
   }

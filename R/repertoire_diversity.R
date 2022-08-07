@@ -52,12 +52,18 @@
 #'   templates etc of unique sequences (also called clonotypes or
 #'   rearrangments). Alternatively, `.x` may be a list of such data frames, a
 #'   single numeric vector of counts, or a list of numeric vectors of counts.
-#'   If a `.x` is a data frame of list of data frames the column containing
-#'   counts must be named one of the following:
-#'   \describe{
-#'   \item{Column containing counts}{named "reads", "copies", "templates",
-#'     "clones", or "counts".}
-#'   }
+#'
+#' @param .col A character string - the name of the column containing counts
+#'   if `.x` is a data frame (or a list of data frames). `.col` accepts one
+#'   of the following:
+#'     * "reads"
+#'     * "seq_reads"
+#'     * "copies"
+#'     * "templates"
+#'     * "clones"
+#'     * "counts"
+#'     * Defaults to "templates" if no user supplied value and `.x` is a data
+#'       frame or list of data frames.
 #'
 #' @param .method A character string of one of the following options:
 #'   * \code{"shannons.clonality"}
@@ -70,14 +76,14 @@
 #'   * \code{"simpsons.equitability"}
 #'   * \code{"r20"}
 #'   * \code{"slope"}
-#'   See ?diversity_methods
+#'   See ?cdr3tools::diversity_methods
 #'
-#'   Default is to return all diversity measures.
+#'   Default is to return all diversity measures if no user supplied value.
 #'
 #' @param .r A numeric vector of length 1. The fraction of top unique sequences
 #'   that, in their sum, account for the given `.r` proportion of total copies
 #'   (or reads or templates). Only used when `.method = "r20"`. Default value is
-#'   0.2.
+#'   0.2 if no user supplied value.
 #'
 #' @returns A numeric vector of length 1, or a data frame of results.
 #'
@@ -96,13 +102,31 @@
 #'   diversity of the human T cell alloresponse. JCI Insight.
 #'   2018 Aug 9;3(15):e121256. doi: 10.1172/jci.insight.121256. PMID: 30089728;
 #'   PMCID: PMC6129121
-#' @seealso [cdr3tools::diversity_methods()]
-#' @family Repertoire Diversity
+#'
+#' Obradovic A, Shen Y, Sykes M, Fu J. Integrated Analysis Toolset for Defining
+#'   and Tracking Alloreactive T-cell Clones After Human Solid Organ and
+#'   Hematopoietic Stem Cell Transplantation. Softw Impacts. 2021 Nov;10:100142.
+#'   doi: 10.1016/j.simpa.2021.100142. Epub 2021 Sep 23. PMID: 35291378; PMCID:
+#'   PMC8920412.
+#' @family Immunoseq
 #' @export
-repertoire_diversity <- function(.x, .method = diversity_methods(), .r = 0.20) {
+repertoire_diversity <- function(.x, .col = NULL,
+                                 .method = cdr3tools::diversity_methods(),
+                                 .r = NULL) {
 
   x <- .x
+  if (is.null(.col)) {
+    .col <- "templates"
+  }
+  col <- rlang::arg_match(.col, c("templates", "reads", "seq_reads", "copies",
+                                  "clones", "counts"))
   method <- .method
+  if (is.null(.r)) {
+    .r <- 0.2
+  }
+  if (.r > 1 || .r < 0) {
+    rlang::abort(".r must be a numeric in the set [0, 1]")
+  }
   r <- .r
 
   if (!(inherits(x, "list") || inherits(x, "data.frame") || inherits(x, "numeric"))) {
@@ -118,24 +142,23 @@ repertoire_diversity <- function(.x, .method = diversity_methods(), .r = 0.20) {
   }
 
   if (inherits(x, "list")) {
-    result <- lapply(x, function(x) repertoire_diversity_internal(x, method, r))
+    result <- lapply(x, function(x) repertoire_diversity_internal(x, col, method, r))
     result <- do.call(rbind, result)
     if (!is.null(names(x))) {
       result <- cbind(ID = names(x), result)
     }
     result <- tibble::as_tibble(result)
-    # names(result) <- method
     return(result)
   }
 
   if (inherits(x, "data.frame")) {
-    result <- repertoire_diversity_internal(x, method, r)
+    result <- repertoire_diversity_internal(x, col, method, r)
     result <- tibble::as_tibble(result)
     return(result)
   }
 
   if (inherits(x, "numeric")) {
-    result <- repertoire_diversity_internal(x, method, r)
+    result <- repertoire_diversity_internal(x, col, method, r)
     if (length(names(result)) > 1) {
       result <- tibble::as_tibble(result)
       return(result)
@@ -146,16 +169,21 @@ repertoire_diversity <- function(.x, .method = diversity_methods(), .r = 0.20) {
 
 }
 
-repertoire_diversity_internal <- function(x, method, r) {
+repertoire_diversity_internal <- function(x, col, method, r) {
 
   if (inherits(x, "data.frame")) {
     x <- as.data.frame(x)
 
-    if (!any(grepl("templates|reads|copies|clones|counts", names(x), ignore.case = TRUE), na.rm = TRUE)) {
+    if (nrow(x) == 0) {
+      x <- x[NA, ]
+    }
+
+    if (!any(grepl("templates|reads|seq_reads|copies|clones|counts", names(x),
+                   ignore.case = TRUE), na.rm = TRUE)) {
       rlang::abort(
         paste0(
-          "x must either be a single data frame containing a column of sequence ",
-          "counts (named `templates`, `reads`, `copies`, `clones`, or `counts`)",
+          ".x must either be a single data frame containing a column of sequence ",
+          "counts (named `templates`, `reads`, `seq_reads`, `copies`, `clones`, or `counts`)",
           ", a list containing multiple of such data frames, a single numeric ",
           "vector of sequence counts, or a list containing multiple of such numeric ",
           "vectors."
@@ -163,7 +191,7 @@ repertoire_diversity_internal <- function(x, method, r) {
       )
     }
 
-    counts_col <- grep("templates|reads|copies|clones|counts", names(x), ignore.case = TRUE)
+    counts_col <- col
 
     if (length(counts_col) > 1) {
       rlang::abort("There must be only one column containing counts.")
@@ -172,28 +200,32 @@ repertoire_diversity_internal <- function(x, method, r) {
     x <- x[[counts_col]]
   }
 
+  if (length(x) == 0) {
+    x <- NA_real_
+  }
+
   method <- rlang::arg_match(method, diversity_methods(), multiple = TRUE)
 
-  result <- lapply(
-    method,
-    # FUN.VALUE = numeric(1),
-    # USE.NAMES = TRUE,
-    FUN = function(method) {
-      switch(method,
-        shannons.entropy = shannons_entropy(x),
-        shannons.diversity = shannons_diversity_index(x),
-        shannons.clonality = shannons_clonality(x),
-        simpsons.index = simpsons_index(x),
-        gini.simpson = gini_simpson_index(x),
-        simpsons.dominance = simpsons_dominance(x),
-        simpsons.equitability = simpsons_equitability(x),
-        simpsons.clonality = simpsons_clonality(x),
-        r20 = r20(x, r),
-        slope = abundance_slope(x),
-        rlang::abort("No valid method detected. see ?diversity_methods")
-      )
+  result <- lapply(method, function(method) {
+    switch(method,
+      shannons.entropy = shannons_entropy(x),
+      shannons.diversity = shannons_diversity_index(x),
+      shannons.clonality = shannons_clonality(x),
+      simpsons.index = simpsons_index(x),
+      gini.simpson = gini_simpson_index(x),
+      simpsons.dominance = simpsons_dominance(x),
+      simpsons.equitability = simpsons_equitability(x),
+      simpsons.clonality = simpsons_clonality(x),
+      r20 = r20(x, r),
+      slope = abundance_slope(x),
+      rlang::abort("No valid method detected. see ?cdr3tools::diversity_methods")
+    )
     }
   )
+
+  if (any(grepl("r20", method, ignore.case = TRUE)) && r != 0.2) {
+    method[grepl("r20", method, ignore.case = TRUE)] <- paste0("r", r * 100)
+  }
 
   names(result) <- method
   result <- as.data.frame(result, row.names = NULL)
@@ -201,6 +233,10 @@ repertoire_diversity_internal <- function(x, method, r) {
 }
 
 shannons_entropy <- function(x) {
+  if (length(x) == 1 && is.na(x)) {
+    return(NA_real_)
+  }
+  x <- x[which(!is.na(x))]
   x <- x[x > 0]
   S <- length(x)
   P <- x / sum(x)
@@ -210,6 +246,10 @@ shannons_entropy <- function(x) {
 }
 
 shannons_diversity_index <- function(x) {
+  if (length(x) == 1 && is.na(x)) {
+    return(NA_real_)
+  }
+  x <- x[which(!is.na(x))]
   x <- x[x > 0]
   S <- length(x)
   P <- x / sum(x)
@@ -219,6 +259,10 @@ shannons_diversity_index <- function(x) {
 }
 
 shannons_clonality <- function(x) {
+  if (length(x) == 1 && is.na(x)) {
+    return(NA_real_)
+  }
+  x <- x[which(!is.na(x))]
   x <- x[x > 0]
   S <- length(x)
   P <- x / sum(x)
@@ -230,6 +274,10 @@ shannons_clonality <- function(x) {
 }
 
 simpsons_index <- function(x) {
+  if (length(x) == 1 && is.na(x)) {
+    return(NA_real_)
+  }
+  x <- x[which(!is.na(x))]
   x <- x[x > 0]
   P <- x / sum(x)
   D1 <- sum(P * P)
@@ -237,6 +285,10 @@ simpsons_index <- function(x) {
 }
 
 gini_simpson_index <- function(x) {
+  if (length(x) == 1 && is.na(x)) {
+    return(NA_real_)
+  }
+  x <- x[which(!is.na(x))]
   x <- x[x > 0]
   P <- x / sum(x)
   D1 <- sum(P * P)
@@ -245,6 +297,10 @@ gini_simpson_index <- function(x) {
 }
 
 simpsons_dominance <- function(x) {
+  if (length(x) == 1 && is.na(x)) {
+    return(NA_real_)
+  }
+  x <- x[which(!is.na(x))]
   x <- x[x > 0]
   P <- x / sum(x)
   D1 <- sum(P * P)
@@ -253,6 +309,10 @@ simpsons_dominance <- function(x) {
 }
 
 simpsons_equitability <- function(x) {
+  if (length(x) == 1 && is.na(x)) {
+    return(NA_real_)
+  }
+  x <- x[which(!is.na(x))]
   x <- x[x > 0]
   S <- length(x)
   P <- x / sum(x)
@@ -263,6 +323,10 @@ simpsons_equitability <- function(x) {
 }
 
 simpsons_clonality <- function(x) {
+  if (length(x) == 1 && is.na(x)) {
+    return(NA_real_)
+  }
+  x <- x[which(!is.na(x))]
   x <- x[x > 0]
   P <- x / sum(x)
   D1 <- sum(P * P)
@@ -270,6 +334,10 @@ simpsons_clonality <- function(x) {
 }
 
 r20 <- function(x, r) {
+  if (length(x) == 1 && is.na(x)) {
+    return(NA_real_)
+  }
+  x <- x[which(!is.na(x))]
   x <- x[x > 0]
   S <- length(x)
   P <- x / sum(x)
@@ -282,7 +350,11 @@ r20 <- function(x, r) {
 
 #' @importFrom rlang .data
 abundance_slope <- function(x) {
-  data <- tibble::tibble(templates = {{ x }}) %>%
+  if (length(x) == 1 && is.na(x)) {
+    return(NA_real_)
+  }
+  x <- x[which(!is.na(x))]
+  data <- tibble::tibble(templates = x) %>%
     dplyr::filter(.data$templates > 0) %>%
     dplyr::mutate(template_fraction = .data$templates / sum(.data$templates)) %>%
     dplyr::group_by(.data$template_fraction, .data$templates) %>%
@@ -311,4 +383,33 @@ abundance_slope <- function(x) {
 
   slope <- abs(stats::coefficients(model)[[2]])
   return(slope)
+}
+
+#' Diversity Calculation Methods
+#'
+#' For use with the [cdr3tools::repertoire_diversity()] function.
+#'
+#' These are the various methods of diversity calculation that can be used to
+#'   quantify diversity of T cell receptor sequence repertoires. These methods
+#'   must be passed as individual character strings to the `.method` argument in
+#'   the [cdr3tools::repertoire_diversity()] function. Available options to
+#'   `.method` are:
+#'   * \code{"shannons.clonality"}
+#'   * \code{"shannons.entropy"}
+#'   * \code{"shannons.diversity"}
+#'   * \code{"gini.simpson"}
+#'   * \code{"simpsons.clonality"}
+#'   * \code{"simpsons.index"}
+#'   * \code{"simpsons.dominance"}
+#'   * \code{"simpsons.equitability"}
+#'   * \code{"r20"}
+#'   * \code{"slope"}
+#' @examples diversity_methods()
+#' @author Christopher Parks
+#' @family Immunoseq
+#' @export
+diversity_methods <- function() {
+  c("shannons.clonality", "shannons.entropy", "shannons.diversity",
+    "gini.simpson", "simpsons.clonality", "simpsons.index",
+    "simpsons.dominance", "simpsons.equitability", "r20", "slope")
 }

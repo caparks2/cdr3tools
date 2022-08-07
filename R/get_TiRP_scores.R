@@ -208,22 +208,28 @@ get_TiRP_scores_internal <- function(data, details) {
   }
 
   data$feat <- paste("p107", substr(data$cdr3, 4, 4), sep = "")
-  data <- dplyr::left_join(
-    dtplyr::lazy_dt(data),
-    touse[, c("feat", "metabeta")],
-    by = "feat"
-  )
+  LHS <- dtplyr::lazy_dt(data, key_by = "feat")
+  RHS <- dtplyr::lazy_dt(touse[, c("feat", "metabeta")], key_by = "feat")
+  data <- dplyr::left_join(LHS, RHS, by = "feat")
+  # data <- dplyr::left_join(
+  #   dtplyr::lazy_dt(data),
+  #   touse[, c("feat", "metabeta")],
+  #   by = "feat"
+  # )
   data <- as.data.frame(data)
   colnames(data)[ncol(data)] <- "p107_score"
   data$p107_score[is.na(data$p107_score)] <- 0
   # data$p107_score <- sapply(data$p107_score, function(x) ifelse(is.na(x), 0, x))
 
   data$feat <- paste("Jmotif", data$Jmotif, sep = "")
-  data <- dplyr::left_join(
-    dtplyr::lazy_dt(data),
-    touse[, c("feat", "metabeta")],
-    by = "feat"
-  )
+  LHS <- dtplyr::lazy_dt(data, key_by = "feat")
+  RHS <- dtplyr::lazy_dt(touse[, c("feat", "metabeta")], key_by = "feat")
+  data <- dplyr::left_join(LHS, RHS, by = "feat")
+  # data <- dplyr::left_join(
+  #   dtplyr::lazy_dt(data),
+  #   touse[, c("feat", "metabeta")],
+  #   by = "feat"
+  # )
   data <- as.data.frame(data)
   colnames(data)[ncol(data)] <- "Jmotif_score"
   data$Jmotif_score[is.na(data$Jmotif_score)] <- 0
@@ -231,22 +237,28 @@ get_TiRP_scores_internal <- function(data, details) {
 
   # data$feat <- sapply(data$cdr3, function(x) substr(x, nchar(x) - 5, nchar(x) - 5), USE.NAMES = F)
   data$feat <- paste("p113", substr(data$cdr3, nchar(data$cdr3) - 5, nchar(data$cdr3) - 5), sep = "")
-  data <- dplyr::left_join(
-    dtplyr::lazy_dt(data),
-    touse[, c("feat", "metabeta")],
-    by = "feat"
-  )
+  LHS <- dtplyr::lazy_dt(data, key_by = "feat")
+  RHS <- dtplyr::lazy_dt(touse[, c("feat", "metabeta")], key_by = "feat")
+  data <- dplyr::left_join(LHS, RHS, by = "feat")
+  # data <- dplyr::left_join(
+  #   dtplyr::lazy_dt(data),
+  #   touse[, c("feat", "metabeta")],
+  #   by = "feat"
+  # )
   data <- as.data.frame(data)
   colnames(data)[ncol(data)] <- "p113_score"
   data$p113_score[is.na(data$p113_score)] <- 0
   # data$"p113_score" <- sapply(data$"p113_score", function(x) ifelse(is.na(x), 0, x))
 
   data$feat <- paste("length", data$length, sep = "")
-  data <- dplyr::left_join(
-    dtplyr::lazy_dt(data),
-    touse[, c("feat", "metabeta")],
-    by = "feat"
-  )
+  LHS <- dtplyr::lazy_dt(data, key_by = "feat")
+  RHS <- dtplyr::lazy_dt(touse[, c("feat", "metabeta")], key_by = "feat")
+  data <- dplyr::left_join(LHS, RHS, by = "feat")
+  # data <- dplyr::left_join(
+  #   dtplyr::lazy_dt(data),
+  #   touse[, c("feat", "metabeta")],
+  #   by = "feat"
+  # )
   data <- as.data.frame(data)
   colnames(data)[ncol(data)] <- "length_score"
   data$length_score[is.na(data$length_score)] <- 0

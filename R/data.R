@@ -49,3 +49,9 @@
 #'
 #' @format A list as follows of biochemical properites
 "AAdata"
+
+#' CFSE Low Immunoseq data
+"cfselo_seqs"
+
+#' Unstimulated Immunoseq data
+"unstim_seqs"
