@@ -70,6 +70,23 @@ sequence in the responding and unstimulated repertoires are also included.
 Determine alloreactive TCR sequences from Immunoseq sequencing data of
 responding (CFSE Lo) T cells from an MLR and unstimulated T cells.
 }
+\details{
+This function automates the determination of alloreactive TCR sequences as
+documented in
+\href{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8920412/}{Obradovic 2021}.
+Input sequencing data must be of the same format as that returned by
+\link{read_immunoseq}. At minimum two sequencing files are required:
+a FACS sorted responder population of T cells that were activated against
+target cells in a mixed lymphocyte reaction (usually stained with CFSE to
+track proliferation by FACS) and an unstimulated population
+of T cells from the same source as the responder T cells. Optionally, the
+function accepts separate files if CD4 and CD8 populations were FACS sorted
+from either or both of the input T cell populations. It should be noted that
+the Sykes Lab's convention is to use a 1e-5 frequency threshold for reads
+and 2e-5 for templates since Immunoseq uses a 1 copy cutoff for templates
+but not reads. The fold multiplier threshold convention is 2. However,
+users may supply their own values for these parameters.
+}
 \examples{
 get_alloreactives(.cfselo = cfselo_seqs, .unstim = unstim_seqs)
 }

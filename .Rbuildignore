@@ -2,3 +2,5 @@
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^README\.Rmd$
+^test_get_alloreactives\.R$
+^\.Rprofile$
