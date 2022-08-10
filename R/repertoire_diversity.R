@@ -53,9 +53,9 @@
 #'   rearrangments). Alternatively, `.x` may be a list of such data frames, a
 #'   single numeric vector of counts, or a list of numeric vectors of counts.
 #'
-#' @param .col A character string - the name of the column containing counts
-#'   if `.x` is a data frame (or a list of data frames). `.col` accepts one
-#'   of the following:
+#' @param .col A character string (not case sensitive) - the name of the column
+#'   containing counts if `.x` is a data frame (or a list of data frames).
+#'   `.col` accepts one of the following:
 #'     * "reads"
 #'     * "seq_reads"
 #'     * "copies"
@@ -115,11 +115,7 @@ repertoire_diversity <- function(.x, .col = NULL,
                                  .r = NULL) {
 
   x <- .x
-  if (is.null(.col)) {
-    .col <- "templates"
-  }
-  col <- rlang::arg_match(.col, c("templates", "reads", "seq_reads", "copies",
-                                  "clones", "counts"))
+  col <- .col
   method <- .method
   if (is.null(.r)) {
     .r <- 0.2
@@ -184,6 +180,7 @@ repertoire_diversity_internal <- function(x, col, method, r) {
         paste0(
           ".x must either be a single data frame containing a column of sequence ",
           "counts (named `templates`, `reads`, `seq_reads`, `copies`, `clones`, or `counts`)",
+          ", not case sensitive",
           ", a list containing multiple of such data frames, a single numeric ",
           "vector of sequence counts, or a list containing multiple of such numeric ",
           "vectors."
@@ -191,8 +188,14 @@ repertoire_diversity_internal <- function(x, col, method, r) {
       )
     }
 
+    if (is.null(col)) {
+      col <- grep("clones|templates", x, ignore.case = TRUE, value = TRUE)
+    }
+    if (!any(grepl("templates|reads|seq_reads|copies|clones|counts", col,
+                  ignore.case = TRUE))) {
+      rlang::abort('`.col` must be one of "templates", "reads", "seq_reads", "copies", "clones", or "counts". Not case sensitive.')
+    }
     counts_col <- col
-
     if (length(counts_col) > 1) {
       rlang::abort("There must be only one column containing counts.")
     }
