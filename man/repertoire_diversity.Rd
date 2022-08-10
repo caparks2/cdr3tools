@@ -18,9 +18,9 @@ templates etc of unique sequences (also called clonotypes or
 rearrangments). Alternatively, \code{.x} may be a list of such data frames, a
 single numeric vector of counts, or a list of numeric vectors of counts.}
 
-\item{.col}{A character string - the name of the column containing counts
-if \code{.x} is a data frame (or a list of data frames). \code{.col} accepts one
-of the following:
+\item{.col}{A character string (not case sensitive) - the name of the column
+containing counts if \code{.x} is a data frame (or a list of data frames).
+\code{.col} accepts one of the following:
 * "reads"
 * "seq_reads"
 * "copies"
