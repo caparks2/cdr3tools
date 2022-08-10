@@ -189,7 +189,7 @@ repertoire_diversity_internal <- function(x, col, method, r) {
     }
 
     if (is.null(col)) {
-      col <- grep("clones|templates", x, ignore.case = TRUE, value = TRUE)
+      col <- grep("clones|templates", names(x), ignore.case = TRUE, value = TRUE)
     }
     if (!any(grepl("templates|reads|seq_reads|copies|clones|counts", col,
                   ignore.case = TRUE))) {
