@@ -235,42 +235,37 @@ repertoire_diversity_internal <- function(x, col, method, r) {
   return(result)
 }
 
-shannons_entropy <- function(x) {
-  if (length(x) == 1 && is.na(x)) {
+shannons_entropy <- function(x, base = NULL) {
+  if (length(x) == 1 && is.na(x))
     return(NA_real_)
-  }
+  if (is.null(base))
+    base <- 2
   x <- x[which(!is.na(x))]
-  x <- x[x > 0]
-  S <- length(x)
   P <- x / sum(x)
-  Hmax <- log2(S)
-  H <- -1 * sum(P * log2(P))
+  H <- -1 * sum(P * log(P, base))
   return(H)
 }
 
 shannons_diversity_index <- function(x) {
-  if (length(x) == 1 && is.na(x)) {
+  if (length(x) == 1 && is.na(x))
     return(NA_real_)
-  }
   x <- x[which(!is.na(x))]
-  x <- x[x > 0]
-  S <- length(x)
   P <- x / sum(x)
-  Hmax <- log(S)
   H <- -1 * sum(P * log(P))
   return(H)
 }
 
-shannons_clonality <- function(x) {
-  if (length(x) == 1 && is.na(x)) {
+shannons_clonality <- function(x, base = NULL) {
+  if (length(x) == 1 && is.na(x))
     return(NA_real_)
-  }
+  if (is.null(base))
+    base <- 2
   x <- x[which(!is.na(x))]
   x <- x[x > 0]
   S <- length(x)
   P <- x / sum(x)
-  Hmax <- log2(S)
-  H <- -1 * sum(P * log2(P))
+  Hmax <- log(S, base)
+  H <- -1 * sum(P * log(P, base))
   E <- H / Hmax
   C <- 1 - E
   return(C)
@@ -281,7 +276,6 @@ simpsons_index <- function(x) {
     return(NA_real_)
   }
   x <- x[which(!is.na(x))]
-  x <- x[x > 0]
   P <- x / sum(x)
   D1 <- sum(P * P)
   return(D1)
@@ -292,7 +286,6 @@ gini_simpson_index <- function(x) {
     return(NA_real_)
   }
   x <- x[which(!is.na(x))]
-  x <- x[x > 0]
   P <- x / sum(x)
   D1 <- sum(P * P)
   GS <- 1 - D1
@@ -304,7 +297,6 @@ simpsons_dominance <- function(x) {
     return(NA_real_)
   }
   x <- x[which(!is.na(x))]
-  x <- x[x > 0]
   P <- x / sum(x)
   D1 <- sum(P * P)
   D2 <- 1 / D1
@@ -330,7 +322,6 @@ simpsons_clonality <- function(x) {
     return(NA_real_)
   }
   x <- x[which(!is.na(x))]
-  x <- x[x > 0]
   P <- x / sum(x)
   D1 <- sum(P * P)
   return(sqrt(D1))

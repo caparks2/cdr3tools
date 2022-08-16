@@ -1,41 +1,67 @@
-#' Jensen Shannon Divergence (or Distance)
+#' Jensen Shannon Divergence and Distance
 #'
-#' Calculate Jensen Shannon Divergence or Distance between two
+#' Calculate Jensen Shannon Divergence or Jensen Shannon Distance between two
 #'   antigen receptor sequence repertoires.
 #'
-#' The Jensen Shannon Divergence (or Distance), JSD, is calculated for normalized
-#'   repertoire vectors of counts (or frequencies) using relative entropy
-#'   (the Kullback Leibler Divergence). Returned values are between 0 and 1,
-#'   with 0 meaning identical repertoires and 1 meaning complete divergence.
-#'   JSD is an information theory-based measure of the divergence of TCR
-#'   repertoires. This is a symmetric value defined for any two repertoires p
-#'   and q as JSD(p, q) = (D(p || m) + D(q || m)) / 2. The code was adapted
-#'   as closely as possible from the Python Scipy versions given in the
-#'   references.
+#' The Jensen Shannon Divergence (JSD) is calculated for normalized
+#'   vectors of unique sequence counts, or frequencies. Returned values are
+#'   between 0 and 1, with 0 meaning identical repertoires and 1 meaning
+#'   complete divergence. JSD is an information theory measure of the divergence
+#'   of TCR repertoires. This is a symmetric value defined for any two
+#'   vectors of normalised unique sequence counts *P* and *Q* in:
 #'
-#' @param p Numeric vector of repertoire counts or frequencies (normalized
+#'   \deqn{\mathrm{JSD}(P \parallel Q) = \frac{1}{2}D(P \parallel M) + \frac{1}{2}D(Q \parallel M)}
+#'
+#'   where D is the Kullback Leibler Divergence (also called the relative
+#'   entropy) and M is a vector of point-wise means between *P* and *Q*. The
+#'   code was adapted as closely as possible from the scipy versions given in
+#'   the references.
+#'
+#'   To reproduce the JSD method used by Boris Grinshpun (Yufeng Shen and Megan
+#'   Sykes Labs) in the DeWolf 2018 JCI Insight paper (see references),
+#'   set `distance` = `TRUE`.
+#'
+#'   *A special note:* R recycles atomic vectors during arithmetic operations if
+#'   the vectors are of unequal lengths. This means JSD will be calculated
+#'   incorrectly in R if the two repertoires being compared have differing
+#'   numbers of unique sequences. This function allows for calculating JSD for
+#'   vectors of unequal lengths by padding either the input `p` or `q` vector
+#'   with zeroes to the length of that which is longer for the calculation of
+#'   point-wise means *M* and selects from the longer up to the length of the
+#'   shorter for the calculation of Kullback Leibler Divergence. These steps
+#'   exist only to prevent R from recycling vectors inadvertently and do not
+#'   impact the symmetrical nature of the JSD measure.
+#'
+#'   `p` and `q` input vectors can be integer counts or normalized count doubles
+#'   (frequencies).
+#'
+#' @param p Numeric. Vector of unique sequence counts or frequencies (normalized
 #'   counts). Corresponds to the "templates", "Counts", "frequency", or
 #'   "Proportion" columns in data returned by [cdr3tools::read_immunoseq] or
 #'   [cdr3tools::format_immunarch].
-#' @param q Numeric vector of repertoire counts or frequencies (normalized
+#' @param q Numeric. Vector of unique sequence counts or frequencies (normalized
 #'   counts). Corresponds to the "templates", "Counts", "frequency", or
 #'   "Proportion" columns in data returned by [cdr3tools::read_immunoseq] or
 #'   [cdr3tools::format_immunarch].
-#' @param base Numeric. The logarithm base to use in the calculation. Default
-#'   is the natural logarithm base e. Note that log base 2 is commonly used.
-#' @param distance Logical. `FALSE` (the default) calculates Jensen Shannon
-#'   Divergence. `TRUE` calculates Jensen Shannon Distance, the square root of
-#'   Jensen Shannon Divergence.
+#' @param base Numeric. The logarithm base to use in the calculation. If `NULL`,
+#'   the default is base 2. Note that base e and base 10 are also commonly
+#'   used.
+#' @param distance Logical. If `NULL` or `FALSE` (the default), calculates
+#'   Jensen Shannon Divergence. `TRUE` calculates Jensen Shannon Distance, the
+#'   square root of Jensen Shannon Divergence.
 #' @returns Numeric. The value of Jensen Shannon Divergence, or at user's
 #'   option, the value of Jensen Shannon Distance, both using the default
-#'   natural logarithm or user supplied logarithm base value.
+#'   base 2 logarithm or user supplied logarithm base value.
 #' @examples
 #' p = c(0.10, 0.40, 0.50)
 #' q = c(0.80, 0.15, 0.05)
+#'
 #' # Jensen Shannon Divergence using ln
-#' jensen_shannon(p, q)
+#' jensen_shannon(p, q, base = exp(1))
+#'
 #' # Jensen Shannon Divergence using log2
-#' jensen_shannon(p, q, base = 2)
+#' jensen_shannon(p, q)
+#'
 #' # Jensen Shannon Distance using log2
 #' jensen_shannon(p, q, base = 2, distance = TRUE)
 #' @author Christopher Parks
@@ -45,59 +71,66 @@
 #'   diversity of the human T cell alloresponse. JCI Insight.
 #'   2018 Aug 9;3(15):e121256. doi: 10.1172/jci.insight.121256.
 #'   PMID: 30089728; PMCID: PMC6129121.
+#'
 #' \url{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6129121/}
+#'
 #' \url{https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.jensenshannon.html}
+#'
 #' \url{https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.entropy.html}
+#'
 #' \url{https://docs.scipy.org/doc/scipy/reference/generated/scipy.special.rel_entr.html}
+#'
 #' @export
 jensen_shannon <- function(p, q, base = NULL, distance = NULL) {
+  # check for correct input format
   if (!any(inherits(p, "numeric"), inherits(q, "numeric")))
     rlang::abort("p and q must be numeric vectors of counts or frequencies.")
-
   # process inputs
-  if (is.null(distance))
-    distance <- FALSE
-  if (is.null(base))
-    base <- exp(1)
-  p <- p[p > 0]
-  q <- q[q > 0]
-
-  # normalize p and q
-  if (!min(p) >= 0 || max(p) <= 1)
-    p <- p / sum(p)
-  if (!min(q) >= 0 || max(q) <= 1)
-    q <- q / sum(q)
-
-  # calculate point-wise mean
-  m <- (p + q) / 2
-
-  # calculate relative entropy (Kullback Leibler Divergence)
-  Dp <- sum(kullback_leibler(p, m, base))
-  Dq <- sum(kullback_leibler(q, m, base))
-
-  # calculate Jensen Shannon Divergence
-  jsd <- 0.5 * Dp + 0.5 * Dq
-
-  # calculate Jensen Shannon Distance
-  if (distance)
-    jsd <- sqrt(jsd)
-
-  return(jsd)
+  if (is.null(distance))  distance  <- FALSE
+  if (is.null(base))      base      <- 2
+  p                                 <- p[!is.na(p)]
+  q                                 <- q[!is.na(q)]
+  # normalize p and q if p and q are integer vectors
+  if (any(p < 0, q < 0)) rlang::abort("p and q must be positive integers or doubles")
+  if (all(p %% 1 == 0)) p <- p / sum(p)
+  if (all(q %% 1 == 0)) q <- q / sum(q)
+  if (!(sum(q) == 1 && sum(p) == 1))
+    rlang::abort(
+      paste(
+        "p and q must each sum to 1 for i in `p[i] / sum(p)` and",
+        "`q[i] / sum(q)`.\n  Please check that `sum(p) == 1` and `sum(q) == 1`",
+        "both result in `TRUE`\n  if p and q are vectors of frequencies.",
+        "If p and q are vectors of counts\n  check that `sum(p / sum(p)) == 1`",
+        "and `sum(q / sum(q)) == 1` both result\n  in `TRUE`."
+      )
+    )
+  # calculate vector of point-wise means (and avoid R's recycling behavior if
+  #   input vector lengths are unequal)
+  if (length(p) == length(q)) {
+    m <- (p + q) / 2
+  } else if (length(q) > length(p)) {
+    p.eq <- c(p, rep(0, abs(length(p) - length(q))))
+    m <- (p.eq + q) / 2
+  } else if (length(p) > length(q)) {
+    q.eq <- c(q, rep(0, abs(length(p) - length(q))))
+    m <- (p + q.eq) / 2
+  }
+  # calculate JS Divergence
+  Dp  <- kullback_leibler(p, m, base)
+  Dq  <- kullback_leibler(q, m, base)
+  JSD <- 0.5 * (Dp + Dq)
+  ## calculate JS Divergence (alternative steps but same answer)
+  ## Hj  <- shannons_entropy(m, base)
+  ## Hp  <- shannons_entropy(p, base)
+  ## Hq  <- shannons_entropy(q, base)
+  ## JSD <- Hj - 0.5 * (Hp + Hq)
+  # calculate JS Distance or return JS Divergence
+  if (distance) sqrt(JSD) else JSD
 }
 
-kullback_leibler <- function(p, q, base = NULL) {
-  # process inputs
-  if (is.null(base))
-    base <- exp(1)
-
-  # normalize p and q
-  p <- p[p > 0]
-  q <- q[q > 0]
-  if (!min(p) >= 0 || max(p) <= 1)
-    p <- p / sum(p)
-  if (!min(q) >= 0 || max(q) <= 1)
-    q <- q / sum(q)
-
-  # calculate relative entropy (Kullback Leibler Divergence)
-  p * log(p / q, base)
+kullback_leibler <- function(p, q, base) {
+  # avoid R's recycling rules if input vectors are unequal lengths
+  if (length(p) > length(q)) p <- p[1:length(q)]
+  if (length(q) > length(p)) q <- q[1:length(p)]
+  sum(p * log(p / q, base))
 }
