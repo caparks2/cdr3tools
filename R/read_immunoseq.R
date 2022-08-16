@@ -98,15 +98,14 @@ read_immunoseq <- function(.path, .functional = NULL, .format_IMGT = NULL) {
     )
   }
 
+  # add a template frequency column and sort by frequency
   data <- purrr::map(data, function(x) {
-      x %>%
-        # add a template frequency column
-        dplyr::mutate(
-          frequency = .data$templates / sum(.data$templates),
-          .after = .data$templates
-        ) %>%
-        # sort by frequency
-        dplyr::arrange(dplyr::desc(.data$frequency))
+    x %>%
+      dplyr::mutate(
+        frequency = .data$templates / sum(.data$templates),
+        .after = .data$templates
+      ) %>%
+      dplyr::arrange(dplyr::desc(.data$frequency))
     }
   )
 
