@@ -2,10 +2,33 @@
 % Please edit documentation in R/format_immunarch.R
 \name{format_immunarch}
 \alias{format_immunarch}
-\title{Format Repertoire Data for use with Immunarch}
+\title{Format Imunoseq Data for use with Immunarch}
 \usage{
-format_immunarch()
+format_immunarch(.data)
+}
+\arguments{
+\item{.data}{A list or a single data frame as returned by
+\link{read_immunoseq}.}
+}
+\value{
+A list or a single data frame of Immunarch formatted data.
 }
 \description{
-Format Repertoire Data for use with Immunarch
+Prepare Immunoseq data according to Immunarch data format
+}
+\details{
+Works on Immunoseq data as returned by the \link{read_immunoseq}
+function. If unique sequences were collapsed using
+\link{collapse_sequences} the resulting column \code{sequence} will be a
+list column containing the rearrangment sequences from each of the
+duplicate unique sequences.
+}
+\examples{
+format_immunarch(cfselo_seqs)
+}
+\references{
+\url{https://immunarch.com/reference/immunr_data_format.html}
+}
+\author{
+Christopher Parks
 }

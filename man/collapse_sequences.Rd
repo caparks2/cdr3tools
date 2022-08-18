@@ -3,7 +3,13 @@
 \name{collapse_sequences}
 \alias{collapse_sequences}
 \title{Collapse Unique Sequences}
+\usage{
+collapse_sequences(data, .group_by = NULL)
+}
 \arguments{
+\item{data}{A list or a single data frame as returned by
+\link{read_immunoseq}.}
+
 \item{.group_by}{Character. The combination of T cell receptor sequences and
 V and J genes to use in order to group unique sequences. If \code{NULL}, the
 default is to group unique sequences by CDR3 nucleotide sequence plus the
@@ -13,19 +19,26 @@ most resolved V and J gene calls. Allowed inputs to \code{.group_by} are:
 \item{"ntvj"}{\emph{Default}. CDR3 nucleotide sequence plus most resolved V and J gene calls}
 \item{"aa"}{CDR3 amino acid sequence}
 \item{"aavj"}{CDR3 amino acid sequence plus most resolved V and J gene calls}
-\item{"rearrangement"}{full nucleotide sequence (not suitable for comparisons across platforms)}
-\item{"extended_rearrangement"}{extended full nucleotide sequence (not suitable for comparisons across platforms)}
-\item{"rearrangement_trunc"}{truncated full nucleotide sequence}
 }}
-
-\item{.use_reads}{Logical. \code{FALSE} (the default) indicates that repertoire
-frequencies should be calculated using templates. \code{TRUE} indicates that
-repertoire frequencies should be calculated using reads. Immunoseq files
-are sometimes exported without reads information if templates are present
-in the data. In this case `` will throw an
-error if \code{.use_reads} = TRUE.}
+}
+\value{
+A list or a single data frame of Immunoseq data with
 }
 \description{
 Collapse repertoires using various combinations of unique sequence
-definitions
+definitions.
+}
+\details{
+Rearrangement sequences are grouped according to the user selected unique
+sequence definition and returned as list columns. The returned data will
+contain one row per unique sequence. A column \code{duplicates} is added to
+show the number of rearrangement sequences that match to a single
+unique sequence. This is useful for minimizing PCR and sequencing errors that
+result in artificially inflated unique sequence counts.
+}
+\examples{
+collapse_sequences(cfselo_seqs)
+}
+\author{
+Christopher Parks
 }
