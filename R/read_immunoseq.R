@@ -71,7 +71,7 @@ read_immunoseq <- function(.path, .functional = NULL, .format_IMGT = NULL) {
           "sample_name", "frame_type", "templates", "seq_reads", "cdr3_rearrangement",
           "cdr3_amino_acid", "v_resolved", "d_resolved", "j_resolved",
           "n1_index", "v_index", "d_index", "n2_index", "j_index",
-          "n1_insertions", "n2_insertions", "rearrangement", "extended_rearrangement",
+          "n1_insertions", "n2_insertions", "rearrangement",
           "rearrangement_trunc"
         )
       )
