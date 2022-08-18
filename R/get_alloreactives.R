@@ -50,7 +50,6 @@
 #'       \item{"aa"}{CDR3 amino acid sequence}
 #'       \item{"aavj"}{CDR3 amino acid sequence plus most resolved V and J gene calls}
 #'       \item{"rearrangement"}{full nucleotide sequence (not suitable for comparisons across platforms)}
-#'       \item{"extended_rearrangement"}{extended full nucleotide sequence (not suitable for comparisons across platforms)}
 #'       \item{"rearrangement_trunc"}{truncated full nucleotide sequence}
 #'     }
 #' @param .use_reads Logical. `FALSE` (the default) indicates that repertoire
@@ -83,16 +82,14 @@ get_alloreactives <- function(.cfselo, .unstim, .frequency = 2e-5, .fold = 2,
   if (is.null(.group_by)) .group_by <- "ntvj"
   .group_by <- rlang::arg_match(.group_by, c("nt", "ntvj", "aa", "aavj",
                                              "rearrangement",
-                                             "rearrangement_trunc",
-                                             "extended_rearrangement"))
+                                             "rearrangement_trunc"))
   group_by <- switch(.group_by,
     nt                     = "cdr3_rearrangement",
     ntvj                   = c("cdr3_rearrangement", "v_resolved", "j_resolved"),
     aa                     = "cdr3_amino_acid",
     aavj                   = c("cdr3_amino_acid", "v_resolved", "j_resolved"),
     rearrangement          = "rearrangement",
-    rearrangement_trunc    = "rearrangement_trunc",
-    extended_rearrangement = "extended_rearrangement"
+    rearrangement_trunc    = "rearrangement_trunc"
   )
 
   if (is.null(.use_reads)) .use_reads <- FALSE

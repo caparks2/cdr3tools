@@ -49,7 +49,6 @@ most resolved V and J gene calls. Allowed inputs to \code{.group_by} are:
 \item{"aa"}{CDR3 amino acid sequence}
 \item{"aavj"}{CDR3 amino acid sequence plus most resolved V and J gene calls}
 \item{"rearrangement"}{full nucleotide sequence (not suitable for comparisons across platforms)}
-\item{"extended_rearrangement"}{extended full nucleotide sequence (not suitable for comparisons across platforms)}
 \item{"rearrangement_trunc"}{truncated full nucleotide sequence}
 }}
 
