@@ -16,7 +16,7 @@
 #' @author Christopher Parks
 #' @export
 scale_frequency_min <- function(x) {
-  x <- min(x, na.rm = TRUE)
+  x <- min({{ x }}, na.rm = TRUE)
   x <- as.character(x)
   if (grepl("e", x)) {
     expnt <- sub("(.*\\.[[:digit:]]+e)(.*)", "\\2", x)
@@ -37,7 +37,7 @@ scale_frequency_min <- function(x) {
 #' @rdname scale_frequency_min
 #' @export
 scale_frequency_max <- function(x) {
-  x <- max(x, na.rm = TRUE)
+  x <- max({{ x }}, na.rm = TRUE)
   x <- as.character(x)
   if (grepl("e", x)) {
     expnt <- sub("(.*\\.[[:digit:]]+e)(.*)", "\\2", x)
