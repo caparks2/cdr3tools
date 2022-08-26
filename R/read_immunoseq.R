@@ -61,34 +61,62 @@ read_immunoseq <- function(.path, .functional = NULL, .format_IMGT = NULL) {
   }
 
   # read in immunoseq files while selecting needed columns and dropping the rest.
-  data <- purrr::map(
-    files, function(x) {
-      readr::read_tsv(
-        x,
-        show_col_types = FALSE,
-        progress = FALSE,
-        col_select = c(
-          "sample_name", "frame_type", "templates", "seq_reads", "cdr3_rearrangement",
-          "cdr3_amino_acid", "v_resolved", "d_resolved", "j_resolved",
-          "n1_index", "v_index", "d_index", "n2_index", "j_index",
-          "n1_insertions", "n2_insertions", "rearrangement",
-          "rearrangement_trunc"
+  data <- purrr::map(files, function(files) {
+      data <- data.table::fread(
+        file = files,
+        sep = "\t",
+        header = TRUE,
+        na.strings = c("NA", ""),
+        data.table = FALSE,
+        select = c(
+          sample_name = "character",
+          frame_type = "character",
+          templates = "numeric",
+          seq_reads = "numeric",
+          cdr3_rearrangement = "character",
+          cdr3_amino_acid = "character",
+          v_resolved = "character",
+          d_resolved = "character",
+          j_resolved = "character",
+          n1_index = "numeric",
+          v_index = "numeric",
+          d_index = "numeric",
+          n2_index = "numeric",
+          j_index = "numeric",
+          n1_insertions = "numeric",
+          n2_insertions = "numeric",
+          rearrangement = "character",
+          rearrangement_trunc = "character"
         )
       )
+      data <- tibble::as_tibble(data)
+      data
+      # readr::read_tsv(
+      #   files,
+      #   show_col_types = FALSE,
+      #   progress = FALSE,
+      #   col_select = c(
+      #     "sample_name", "frame_type", "templates", "seq_reads", "cdr3_rearrangement",
+      #     "cdr3_amino_acid", "v_resolved", "d_resolved", "j_resolved",
+      #     "n1_index", "v_index", "d_index", "n2_index", "j_index",
+      #     "n1_insertions", "n2_insertions", "rearrangement",
+      #     "rearrangement_trunc"
+      #   )
+      # )
     }
   )
 
   # filter for in-frame, functional sequences.
   if (.functional) {
-    data <- purrr::map(data, function(x) {
-      x %>% dplyr::filter(.data$frame_type == "In")
+    data <- purrr::map(data, function(data) {
+      data %>% dplyr::filter(.data$frame_type == "In")
     })
   }
 
   # correct VDJ gene names to IMGT conventions.
   if (.format_IMGT) {
-    data <- purrr::map(data, function(x) {
-        x %>%
+    data <- purrr::map(data, function(data) {
+        data %>%
           dplyr::mutate(
             v_resolved = cdr3tools::imgt_format_gene_names(.data$v_resolved),
             d_resolved = cdr3tools::imgt_format_gene_names(.data$d_resolved),
@@ -99,8 +127,8 @@ read_immunoseq <- function(.path, .functional = NULL, .format_IMGT = NULL) {
   }
 
   # add a template frequency column and sort by frequency
-  data <- purrr::map(data, function(x) {
-    x %>%
+  data <- purrr::map(data, function(data) {
+    data %>%
       dplyr::mutate(
         frequency = .data$templates / sum(.data$templates),
         .after = .data$templates
@@ -108,6 +136,11 @@ read_immunoseq <- function(.path, .functional = NULL, .format_IMGT = NULL) {
       dplyr::arrange(dplyr::desc(.data$frequency))
     }
   )
+
+  data <- lapply(data, function(data) {
+    attr(data, "repertoire_data_format") <- "cdr3tools_immunoseq_v1"
+    data
+  })
 
   if (inherits(data, "list") && length(data) == 1) {
     data <- data[[1]]

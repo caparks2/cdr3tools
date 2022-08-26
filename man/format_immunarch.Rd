@@ -4,11 +4,11 @@
 \alias{format_immunarch}
 \title{Format Imunoseq Data for use with Immunarch}
 \usage{
-format_immunarch(.data)
+format_immunarch(data)
 }
 \arguments{
-\item{.data}{A list or a single data frame as returned by
-\link{read_immunoseq}.}
+\item{data}{A list or a single data frame as returned by
+\code{\link[=read_immunoseq]{read_immunoseq()}}.}
 }
 \value{
 A list or a single data frame of Immunarch formatted data.
@@ -22,6 +22,16 @@ function. If unique sequences were collapsed using
 \link{collapse_sequences} the resulting column \code{sequence} will be a
 list column containing the rearrangment sequences from each of the
 duplicate unique sequences.
+\itemize{
+\item A special note about list columns* If formatting data as read by
+\code{\link[=read_immunoseq]{read_immunoseq()}} that has had unique sequences collapsed
+using \code{\link[=collapse_sequences]{collapse_sequences()}}, there will be list columns in the
+output. These list columns contain the duplicated (but error containing)
+full length sequences. \code{\link[=format_immunarch]{format_immunarch()}} will select the
+first sequence from each list column row as the representative sequence
+in order to dissolve the list columns. This ensures compatibility with
+Immunarch functions.
+}
 }
 \examples{
 format_immunarch(cfselo_seqs)
@@ -29,6 +39,16 @@ format_immunarch(cfselo_seqs)
 \references{
 \url{https://immunarch.com/reference/immunr_data_format.html}
 }
+\seealso{
+Other Immunoseq: 
+\code{\link{collapse_sequences}()},
+\code{\link{diversity_methods}()},
+\code{\link{get_alloreactives}()},
+\code{\link{read_immunoseq}()},
+\code{\link{remove_contaminants}()},
+\code{\link{repertoire_diversity}()}
+}
 \author{
 Christopher Parks
 }
+\concept{Immunoseq}

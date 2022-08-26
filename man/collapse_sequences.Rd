@@ -8,7 +8,7 @@ collapse_sequences(data, .group_by = NULL)
 }
 \arguments{
 \item{data}{A list or a single data frame as returned by
-\link{read_immunoseq}.}
+\code{\link[=read_immunoseq]{read_immunoseq()}}.}
 
 \item{.group_by}{Character. The combination of T cell receptor sequences and
 V and J genes to use in order to group unique sequences. If \code{NULL}, the
@@ -33,12 +33,22 @@ Rearrangement sequences are grouped according to the user selected unique
 sequence definition and returned as list columns. The returned data will
 contain one row per unique sequence. A column \code{duplicates} is added to
 show the number of rearrangement sequences that match to a single
-unique sequence. This is useful for minimizing PCR and sequencing errors that
-result in artificially inflated unique sequence counts.
+unique sequence. This function is useful for minimizing PCR and sequencing
+errors that result in artificially inflated unique sequence counts.
 }
 \examples{
 collapse_sequences(cfselo_seqs)
 }
+\seealso{
+Other Immunoseq: 
+\code{\link{diversity_methods}()},
+\code{\link{format_immunarch}()},
+\code{\link{get_alloreactives}()},
+\code{\link{read_immunoseq}()},
+\code{\link{remove_contaminants}()},
+\code{\link{repertoire_diversity}()}
+}
 \author{
 Christopher Parks
 }
+\concept{Immunoseq}

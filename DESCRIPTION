@@ -19,7 +19,6 @@ Imports:
     magrittr,
     methods,
     purrr,
-    readr,
     rlang (>= 0.4.11),
     stats,
     stringr,

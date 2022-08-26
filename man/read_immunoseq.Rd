@@ -37,8 +37,11 @@ frame. At this time, only Immunoseq v1 .tsv file exports are supported.
 }
 \seealso{
 Other Immunoseq: 
+\code{\link{collapse_sequences}()},
 \code{\link{diversity_methods}()},
+\code{\link{format_immunarch}()},
 \code{\link{get_alloreactives}()},
+\code{\link{remove_contaminants}()},
 \code{\link{repertoire_diversity}()}
 }
 \author{

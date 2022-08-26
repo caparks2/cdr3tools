@@ -124,9 +124,12 @@ PMC8920412.
 }
 \seealso{
 Other Immunoseq: 
+\code{\link{collapse_sequences}()},
 \code{\link{diversity_methods}()},
+\code{\link{format_immunarch}()},
 \code{\link{get_alloreactives}()},
-\code{\link{read_immunoseq}()}
+\code{\link{read_immunoseq}()},
+\code{\link{remove_contaminants}()}
 }
 \author{
 Boris Grinshpun
