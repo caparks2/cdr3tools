@@ -29,26 +29,42 @@ remove_contaminants <- function(data, seqs) {
     rlang::abort("... must contain only nucleotide and amino acid sequences")
   }
 
-  nt <- seqs[grepl("^[ACTG]+$", seqs, ignore.case = TRUE)]
-  nt <- paste(nt, collapse = "|")
+  any_nt <- any(grepl("^[ACTG]+$", seqs, ignore.case = TRUE), na.rm = TRUE)
 
-  aa <- seqs[grepl("^[ACDEFGHIKLMNPQRSTVWY]+$", seqs, ignore.case = TRUE) &
-               !grepl("^[ACTG]+$", seqs, ignore.case = TRUE)]
-  aa <- paste(aa, collapse = "|")
+  if (any_nt) {
+    nt <- seqs[grepl("^[ACTG]+$", seqs, ignore.case = TRUE)]
+    nt <- paste(nt, collapse = "|")
+  } else {
+    nt <- "(?!)" # the zero length negative look-ahead: matches nothing. Must use Perl style regex to work.
+  }
+
+  any_aa <- any(
+    grepl("^[ACDEFGHIKLMNPQRSTVWY]+$", seqs, ignore.case = TRUE) &
+      !grepl("^[ACTG]+$", seqs, ignore.case = TRUE),
+    na.rm = TRUE
+  )
+
+  if (any_aa) {
+    aa <- seqs[grepl("^[ACDEFGHIKLMNPQRSTVWY]+$", seqs, ignore.case = TRUE) &
+                 !grepl("^[ACTG]+$", seqs, ignore.case = TRUE)]
+    aa <- paste(aa, collapse = "|")
+  } else {
+    aa <- "(?!)"
+  }
 
   data <- lapply(data, function(data) {
 
       if (attr(data, "repertoire_data_format") == "cdr3tools_immunoseq_v1") {
 
-        data <- data[!grepl(aa, data$cdr3_amino_acid, ignore.case = TRUE), ]
-        data <- data[!grepl(nt, data$rearrangement, ignore.case = TRUE), ]
+        data <- data[!grepl(aa, data$cdr3_amino_acid, ignore.case = TRUE, perl = TRUE), ]
+        data <- data[!grepl(nt, data$rearrangement, ignore.case = TRUE, perl = TRUE), ]
         attr(data, "repertoire_data_format") <- "cdr3tools_immunoseq_v1"
         data
 
       } else if (attr(data, "repertoire_data_format") == "cdr3tools_immunarch") {
 
-        data <- data[!grepl(aa, data$CDR3.aa, ignore.case = TRUE), ]
-        data <- data[!grepl(nt, data$Sequence, ignore.case = TRUE), ]
+        data <- data[!grepl(aa, data$CDR3.aa, ignore.case = TRUE, perl = TRUE), ]
+        data <- data[!grepl(nt, data$Sequence, ignore.case = TRUE, perl = TRUE), ]
         attr(data, "repertoire_data_format") <- "cdr3tools_immunarch"
         data
 
