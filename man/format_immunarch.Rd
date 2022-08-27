@@ -22,8 +22,8 @@ function. If unique sequences were collapsed using
 \link{collapse_sequences} the resulting column \code{sequence} will be a
 list column containing the rearrangment sequences from each of the
 duplicate unique sequences.
-\itemize{
-\item A special note about list columns* If formatting data as read by
+
+\strong{\emph{A special note about list columns:}} If formatting data as read by
 \code{\link[=read_immunoseq]{read_immunoseq()}} that has had unique sequences collapsed
 using \code{\link[=collapse_sequences]{collapse_sequences()}}, there will be list columns in the
 output. These list columns contain the duplicated (but error containing)
@@ -31,7 +31,6 @@ full length sequences. \code{\link[=format_immunarch]{format_immunarch()}} will 
 first sequence from each list column row as the representative sequence
 in order to dissolve the list columns. This ensures compatibility with
 Immunarch functions.
-}
 }
 \examples{
 format_immunarch(cfselo_seqs)

@@ -8,7 +8,7 @@
 #'   list column containing the rearrangment sequences from each of the
 #'   duplicate unique sequences.
 #'
-#'   * A special note about list columns* If formatting data as read by
+#'   __*A special note about list columns:*__ If formatting data as read by
 #'   [cdr3tools::read_immunoseq()] that has had unique sequences collapsed
 #'   using [cdr3tools::collapse_sequences()], there will be list columns in the
 #'   output. These list columns contain the duplicated (but error containing)
