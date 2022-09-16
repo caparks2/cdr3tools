@@ -125,11 +125,11 @@ repertoire_diversity <- function(.x, .col = NULL,
   }
   r <- .r
 
-  if (!(inherits(x, "list") || inherits(x, "data.frame") || inherits(x, "numeric"))) {
+  if (!any(inherits(x, "list"), inherits(x, "data.frame"), inherits(x, "numeric"))) {
     rlang::abort(
       paste0(
-        "x must either be a single data frame containing a column of sequence ",
-        "counts (named `templates`, `reads`, `copies`, `clones`, or `counts`)",
+        ".x must either be a single data frame containing a column of sequence ",
+        "counts (named `templates`, `reads`, `seq_reads`, `copies`, `clones`, or `counts`)",
         ", a list containing multiple of such data frames, a single numeric ",
         "vector of sequence counts, or a list containing multiple of such numeric ",
         "vectors."
