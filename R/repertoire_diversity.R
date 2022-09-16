@@ -153,7 +153,7 @@ repertoire_diversity <- function(.x, .col = NULL,
     return(result)
   }
 
-  if (inherits(x, "numeric")) {
+  if (inherits(x, "numeric") || inherits(x, "integer")) {
     result <- repertoire_diversity_internal(x, col, method, r)
     if (length(names(result)) > 1) {
       result <- tibble::as_tibble(result)
