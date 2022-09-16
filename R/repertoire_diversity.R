@@ -125,7 +125,7 @@ repertoire_diversity <- function(.x, .col = NULL,
   }
   r <- .r
 
-  if (!any(inherits(x, "list"), inherits(x, "data.frame"), inherits(x, "numeric"))) {
+  if (!any(inherits(x, "list"), inherits(x, "data.frame"), inherits(x, "numeric"), inherits(x, "integer"))) {
     rlang::abort(
       paste0(
         ".x must either be a single data frame containing a column of sequence ",
