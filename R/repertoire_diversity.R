@@ -246,13 +246,15 @@ shannons_entropy <- function(x, base = NULL) {
   return(H)
 }
 
-shannons_diversity_index <- function(x) {
+shannons_diversity_index <- function(x, base = NULL) {
   if (length(x) == 1 && is.na(x))
     return(NA_real_)
+  if (is.null(base))
+    base <- exp(1)
   x <- x[which(!is.na(x))]
   P <- x / sum(x)
-  H <- -1 * sum(P * log(P))
-  return(H)
+  `H'` <- -1 * sum(P * log(P, base))
+  return(`H'`)
 }
 
 shannons_clonality <- function(x, base = NULL) {
