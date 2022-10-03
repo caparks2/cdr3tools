@@ -94,7 +94,7 @@ jensen_shannon <- function(p, q, base = NULL, distance = NULL) {
   if (any(p < 0, q < 0)) rlang::abort("p and q must be positive integers or doubles")
   if (all(p %% 1 == 0)) p <- p / sum(p)
   if (all(q %% 1 == 0)) q <- q / sum(q)
-  if (!(sum(q) == 1 && sum(p) == 1))
+  if (!(all.equal(sum(q), 1) && all.equal(sum(p), 1)))
     rlang::abort(
       paste(
         "p and q must each sum to 1 for i in `p[i] / sum(p)` and",
