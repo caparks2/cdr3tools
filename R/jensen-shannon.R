@@ -24,13 +24,11 @@
 #'   *A special note:* R recycles atomic vectors during arithmetic operations if
 #'   the vectors are of unequal lengths. This means JSD will be calculated
 #'   incorrectly in R if the two repertoires being compared have differing
-#'   numbers of unique sequences. This function allows for calculating JSD for
-#'   vectors of unequal lengths by padding either the input `p` or `q` vector
-#'   with zeroes to the length of that which is longer for the calculation of
-#'   point-wise means *M* and selects from the longer up to the length of the
-#'   shorter for the calculation of Kullback Leibler Divergence. These steps
-#'   exist only to prevent R from recycling vectors inadvertently and do not
-#'   impact the symmetrical nature of the JSD measure.
+#'   numbers of unique sequences. JSD for antigen receptor repertoires should
+#'   not be calculated this way, so the function will exit with an error
+#'   message. To prevent this, make sure input vectors p and q are of equal
+#'   lengths, and crucially, that each pairwise element of p and q correspond
+#'   to strictly the same unique sequence.
 #'
 #'   `p` and `q` input vectors can be integer counts or normalized count doubles
 #'   (frequencies).
@@ -106,15 +104,14 @@ jensen_shannon <- function(p, q, base = NULL, distance = NULL) {
     )
   # calculate vector of point-wise means (and avoid R's recycling behavior if
   #   input vector lengths are unequal)
-  if (length(p) == length(q)) {
-    m <- (p + q) / 2
-  } else if (length(q) > length(p)) {
-    p.eq <- c(p, rep(0, abs(length(p) - length(q))))
-    m <- (p.eq + q) / 2
-  } else if (length(p) > length(q)) {
-    q.eq <- c(q, rep(0, abs(length(p) - length(q))))
-    m <- (p + q.eq) / 2
-  }
+  if (length(p) != length(q))
+    rlang::abort(
+      paste(
+        "p and q must have equal lengths, and each pair of p and q must",
+        "correspond to the same unique TCR sequence."
+      )
+    )
+  m <- (p + q) / 2
   # calculate JS Divergence
   Dp  <- kullback_leibler(p, m, base)
   Dq  <- kullback_leibler(q, m, base)
@@ -129,8 +126,7 @@ jensen_shannon <- function(p, q, base = NULL, distance = NULL) {
 }
 
 kullback_leibler <- function(p, q, base) {
-  # avoid R's recycling rules if input vectors are unequal lengths
-  if (length(p) > length(q)) p <- p[1:length(q)]
-  if (length(q) > length(p)) q <- q[1:length(p)]
-  sum(p * log(p / q, base))
+  x <- p * log(p / q, base)
+  x[is.nan(x)] <- 0
+  sum(x)
 }

@@ -56,13 +56,11 @@ set \code{distance} = \code{TRUE}.
 \emph{A special note:} R recycles atomic vectors during arithmetic operations if
 the vectors are of unequal lengths. This means JSD will be calculated
 incorrectly in R if the two repertoires being compared have differing
-numbers of unique sequences. This function allows for calculating JSD for
-vectors of unequal lengths by padding either the input \code{p} or \code{q} vector
-with zeroes to the length of that which is longer for the calculation of
-point-wise means \emph{M} and selects from the longer up to the length of the
-shorter for the calculation of Kullback Leibler Divergence. These steps
-exist only to prevent R from recycling vectors inadvertently and do not
-impact the symmetrical nature of the JSD measure.
+numbers of unique sequences. JSD for antigen receptor repertoires should
+not be calculated this way, so the function will exit with an error
+message. To prevent this, make sure input vectors p and q are of equal
+lengths, and crucially, that each pairwise element of p and q correspond
+to strictly the same unique sequence.
 
 \code{p} and \code{q} input vectors can be integer counts or normalized count doubles
 (frequencies).
