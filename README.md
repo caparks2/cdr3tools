@@ -86,7 +86,7 @@ different and can confound JSD calculations. This function deals with R
 recycling gracefully.
 
 ``` r
-?jensen-shannon()
+?jensen_shannon()
 ```
 
 ### IMGT tools

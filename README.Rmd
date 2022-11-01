@@ -87,7 +87,7 @@ Calculate Jensen Shannon Divergence (or Distance) for a reads (or template
 counts) matrix of two repertoires. R vector recycling rules are different and can
 confound JSD calculations. This function deals with R recycling gracefully.
 ```r
-?jensen-shannon()
+?jensen_shannon()
 ```
 
 ### IMGT tools
