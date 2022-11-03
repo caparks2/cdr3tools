@@ -28,7 +28,7 @@
 #'   not be calculated this way, so the function will exit with an error
 #'   message. To prevent this, make sure input vectors p and q are of equal
 #'   lengths, and crucially, that each pairwise element of p and q correspond
-#'   to strictly the same unique sequence
+#'   to strictly the same unique sequence.
 #'
 #'   `p` and `q` input vectors can be integer counts or normalized count doubles
 #'   (frequencies).
